@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hue UI · Direzione C, Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/mockups.css">
+<style>
+:root {
+    /* grigio neutro N6: lo sfondo delle cabine di valutazione del colore, non altera la percezione */
+    --studio: #8b8c8e;
+    --panel: #ffffff;
+    --ink: #1f2023;
+    --ink-2: #5a5c61;
+    --line: #dedfe2;
+    --tint: #f2f2f3;
+    --fail: #a4231b;
+    --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+    --dock: 120px;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: var(--studio);
+    color: var(--ink);
+    font: 400 16px/1.5 "Schibsted Grotesk", system-ui, sans-serif;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; box-shadow: 0 0 0 5px #fff; border-radius: 6px; }
+
+.bar {
+    position: sticky; top: 0; z-index: 4;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s4);
+    height: 64px; padding: 0 var(--s5);
+    background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: baseline; gap: var(--s3); min-width: 0; }
+.mark { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
+.intro { margin: 0 0 var(--s4); padding-bottom: var(--s4); border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.45; }
+.bar .right { justify-self: end; display: flex; gap: var(--s2); }
+.btn {
+    display: inline-flex; align-items: center; gap: var(--s2);
+    min-height: 44px; padding: 0 var(--s4);
+    border: 0; border-radius: 8px; background: var(--tint);
+    font-weight: 600; font-size: 15px;
+}
+.btn:hover { background: #e6e6e8; }
+.btn[aria-disabled="true"] { color: var(--ink-2); background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); cursor: not-allowed; }
+[role="tablist"] { display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--tint); }
+[role="tab"] { min-height: 40px; padding: 0 var(--s4); border: 0; border-radius: 8px; background: transparent; font-weight: 600; font-size: 14px; color: var(--ink-2); }
+[role="tab"][aria-selected="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
+
+.stage {
+    display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--s5); align-items: start;
+    padding: var(--s6) var(--s6) calc(var(--dock) + var(--s6));
+    max-width: 1440px; margin: 0 auto;
+}
+.canvas { display: grid; justify-items: center; }
+.canvas .mk-landing { width: 100%; max-width: 980px; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 50px -24px rgba(0, 0, 0, 0.5); }
+#v-mobile { padding-top: var(--s2); }
+.rail { position: sticky; top: calc(64px + var(--s6)); background: var(--panel); border-radius: 12px; padding: var(--s4) var(--s4) var(--s3); }
+h2 { margin: 0 0 var(--s2); font-size: 17px; font-weight: 700; }
+.checks { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.checks li { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--s3); padding: 8px 0; border-top: 1px solid var(--line); }
+.checks li b { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.lv { grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.lv .i { width: 14px; height: 14px; }
+.lv[data-level="Fails"] { color: var(--fail); }
+.note { margin: var(--s2) 0 0; font-size: 13px; color: var(--ink-2); }
+
+/* Dock */
+.dock {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+    height: var(--dock);
+    display: flex; align-items: center; gap: var(--s5);
+    padding: 0 var(--s5);
+    background: var(--panel); border-top: 1px solid var(--line);
+}
+.swatches { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--s2); flex: 1; min-width: 0; }
+.sw {
+    flex: 1; min-width: 0;
+    display: grid; grid-template-columns: 64px 1fr; grid-template-rows: auto auto auto; column-gap: var(--s3);
+    padding: var(--s2); border-radius: 10px;
+}
+.sw:hover { background: var(--tint); }
+.chip {
+    grid-row: 1 / span 3; width: 64px; height: 76px; border-radius: 8px; border: 0;
+    background: var(--c); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+    transition: background-color 0.2s;
+}
+.sw .role { font-size: 15px; font-weight: 700; line-height: 1.2; display: flex; align-items: center; justify-content: space-between; gap: var(--s1); }
+.hex { justify-self: start; border: 0; background: none; padding: 0; font-size: 14px; color: var(--ink-2); letter-spacing: 0.02em; min-height: 24px; }
+.hex:hover { color: var(--ink); text-decoration: underline; }
+.grade { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.grade .i { width: 14px; height: 14px; }
+.grade-of { display: none; }
+.grade[data-level="Fails"] { color: var(--fail); }
+.mini { display: flex; }
+.ib { width: 32px; height: 32px; border: 0; background: none; border-radius: 6px; display: grid; place-items: center; color: var(--ink-2); position: relative; }
+.ib::after { content: ""; position: absolute; inset: -6px; } /* area di tocco 44 px */
+.ib .i { width: 18px; height: 18px; }
+.ib:hover { color: var(--ink); background: #e6e6e8; }
+.ib[aria-pressed="true"] { color: #fff; background: var(--ink); }
+.go { display: flex; align-items: center; gap: var(--s2); }
+.generate {
+    min-height: 64px; padding: 0 var(--s6);
+    background: var(--ink); color: #fff; font-size: 19px; font-weight: 700; border-radius: 12px;
+}
+.generate:hover { background: #3a3b3f; }
+.go .undo { min-height: 64px; width: 64px; justify-content: center; padding: 0; border-radius: 12px; }
+.hint { font-size: 13px; color: var(--ink-2); text-align: center; margin-top: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 760px) {
+    :root { --dock: 196px; }
+    .bar { grid-template-columns: 1fr auto; height: auto; padding: var(--s2) var(--s4); row-gap: var(--s2); }
+    .bar .tabs { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; }
+    [role="tablist"] { display: grid; grid-template-columns: 1fr 1fr; }
+    .bar .txt, .bar .kb { display: none; }
+    .stage { grid-template-columns: 1fr; padding: var(--s4) var(--s4) calc(var(--dock) + var(--s5)); }
+    .rail { position: static; }
+    .dock { flex-direction: column; align-items: stretch; gap: var(--s2); padding: var(--s2) 0 var(--s3); }
+    .swatches { overflow-x: auto; padding: 0 var(--s4); scroll-snap-type: x mandatory; flex: none; }
+    .sw { flex: 0 0 172px; scroll-snap-align: start; grid-template-columns: 52px 1fr; background: var(--tint); }
+    .chip { width: 52px; height: 72px; }
+    .go { padding: 0 var(--s4); }
+    .generate { flex: 1; justify-content: center; min-height: 56px; }
+    .go .undo { min-height: 56px; width: 56px; }
+    .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .chip { transition: none; } }
+</style>
+</head>
+<body>
+<header class="bar">
+    <div class="brand"><h1 class="mark">Hue UI</h1></div>
+    <div class="tabs">
+        <div role="tablist" aria-label="Preview">
+            <button role="tab" id="t-land" data-view="landing" aria-selected="true" aria-controls="v-landing">Landing page</button>
+            <button role="tab" id="t-mob" data-view="mobile" aria-selected="false" aria-controls="v-mobile" tabindex="-1">Mobile app</button>
+        </div>
+    </div>
+    <div class="right">
+        <button class="btn kb" type="button"><span data-icon="keyboard"></span><span class="txt">Shortcuts</span></button>
+        <button class="btn" type="button" aria-label="Share palette link"><span data-icon="link"></span><span class="txt">Share</span></button>
+    </div>
+</header>
+
+<main class="stage">
+    <div class="canvas">
+        <div id="v-landing" role="tabpanel" aria-labelledby="t-land" data-mockup="landing" style="width:100%; display:grid; justify-items:center"></div>
+        <div id="v-mobile" role="tabpanel" aria-labelledby="t-mob" data-mockup="mobile" hidden></div>
+    </div>
+    <aside class="rail" aria-labelledby="h-checks">
+        <p class="intro">Random palettes for interfaces. Every color has a job, every pair is readable.</p>
+        <h2 id="h-checks">Contrast checks</h2>
+        <ul class="checks">
+            <li><span>Text on Background</span><b data-check="text-bg"></b><span class="lv" data-check-level="text-bg"></span></li>
+            <li><span>Text on Surface</span><b data-check="text-surface"></b><span class="lv" data-check-level="text-surface"></span></li>
+            <li><span>Muted text on Background</span><b data-check="muted-bg"></b><span class="lv" data-check-level="muted-bg"></span></li>
+            <li><span>On primary on Primary</span><b data-check="on-primary"></b><span class="lv" data-check-level="on-primary"></span></li>
+            <li><span>Primary on Background</span><b data-check="primary-bg"></b><span class="lv" data-check-level="primary-bg"></span></li>
+            <li><span>Accent on Background</span><b data-check="accent-bg"></b><span class="lv" data-check-level="accent-bg"></span></li>
+            <li><span>Status colors on Background</span><b data-check="status-bg"></b><span class="lv" data-check-level="status-bg"></span></li>
+        </ul>
+        <p class="note">Text needs 4.5:1. Controls, marked (UI), need 3:1.</p>
+    </aside>
+</main>
+
+<section class="dock" aria-label="Palette">
+    <ul class="swatches">
+        <li class="sw"><button class="chip" style="--c: var(--p-background)" aria-label="Edit Background color"></button><span class="role">Background<span class="mini"><button class="ib" data-lock="background" aria-pressed="false" aria-label="Lock Background" data-icon="unlock"></button><button class="ib" aria-label="Why? Background" data-icon="help"></button></span></span><button class="hex" data-hex="background" aria-label="Copy Background color"></button><span class="grade" data-weak="background"></span></li>
+        <li class="sw"><button class="chip" style="--c: var(--p-surface)" aria-label="Edit Surface color"></button><span class="role">Surface<span class="mini"><button class="ib" data-lock="surface" aria-pressed="false" aria-label="Lock Surface" data-icon="unlock"></button><button class="ib" aria-label="Why? Surface" data-icon="help"></button></span></span><button class="hex" data-hex="surface" aria-label="Copy Surface color"></button><span class="grade" data-weak="surface"></span></li>
+        <li class="sw"><button class="chip" style="--c: var(--p-text)" aria-label="Edit Text color"></button><span class="role">Text<span class="mini"><button class="ib" data-lock="text" aria-pressed="true" aria-label="Lock Text" data-icon="lock"></button><button class="ib" aria-label="Why? Text" data-icon="help"></button></span></span><button class="hex" data-hex="text" aria-label="Copy Text color"></button><span class="grade" data-weak="text"></span></li>
+        <li class="sw"><button class="chip" style="--c: var(--p-primary)" aria-label="Edit Primary color"></button><span class="role">Primary<span class="mini"><button class="ib" data-lock="primary" aria-pressed="false" aria-label="Lock Primary" data-icon="unlock"></button><button class="ib" aria-label="Why? Primary" data-icon="help"></button></span></span><button class="hex" data-hex="primary" aria-label="Copy Primary color"></button><span class="grade" data-weak="primary"></span></li>
+        <li class="sw"><button class="chip" style="--c: var(--p-accent)" aria-label="Edit Accent color"></button><span class="role">Accent<span class="mini"><button class="ib" data-lock="accent" aria-pressed="false" aria-label="Lock Accent" data-icon="unlock"></button><button class="ib" aria-label="Why? Accent" data-icon="help"></button></span></span><button class="hex" data-hex="accent" aria-label="Copy Accent color"></button><span class="grade" data-weak="accent"></span></li>
+    </ul>
+    <div>
+        <div class="go">
+            <button class="btn undo" type="button" aria-disabled="true" aria-label="Undo" title="Nothing to undo yet." data-icon="undo"></button>
+            <button class="btn generate" type="button" data-generate><span data-icon="refresh"></span>Generate</button>
+        </div>
+        <p class="hint">or press Space</p>
+    </div>
+</section>
+<p id="live" class="sr" aria-live="polite"></p>
+<script src="shared/shared.js"></script>
+</body>
+</html>

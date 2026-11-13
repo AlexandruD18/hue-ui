@@ -1,0 +1,156 @@
+/* Mockup Plotline: usano SOLO le variabili --p-* dei ruoli (02 - Struttura e testi § 11). */
+.mk-landing,
+.mk-app {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--p-text);
+    background: var(--p-background);
+    container-type: inline-size;
+    transition: background-color 0.2s, color 0.2s;
+}
+.mk-landing { padding: 0 0 24px; }
+.mk-landing p { margin: 0; }
+.mk-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--p-surface);
+    border-bottom: 1px solid var(--p-border);
+    font-size: 13px;
+}
+.mk-logo { font-size: 15px; letter-spacing: -0.01em; }
+.mk-links { display: flex; gap: 16px; color: var(--p-muted-text); margin-left: auto; }
+.mk-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 6px;
+    background: var(--p-primary);
+    color: var(--p-on-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+.mk-btn-sm { padding: 6px 12px; font-size: 13px; }
+.mk-hero { padding: 40px 24px 28px; max-width: 560px; }
+.mk-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+    border: 1.5px solid var(--p-accent);
+    color: var(--p-accent);
+}
+.mk-hero h3 { font-size: 34px; line-height: 1.08; letter-spacing: -0.02em; margin: 14px 0 10px; }
+.mk-hero p { color: var(--p-muted-text); font-size: 15px; line-height: 1.5; }
+.mk-cta { display: flex; gap: 18px; align-items: center; margin-top: 20px; font-size: 14px; }
+.mk-link { color: var(--p-primary); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.mk-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 24px; }
+.mk-card {
+    background: var(--p-surface);
+    border: 1px solid var(--p-border);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.mk-card b { display: block; margin-bottom: 4px; font-size: 14px; }
+.mk-card p { color: var(--p-muted-text); }
+.mk-quote { margin: 20px 24px 0; padding-left: 14px; border-left: 3px solid var(--p-accent); }
+.mk-quote p { font-size: 17px; line-height: 1.35; }
+.mk-quote span { font-size: 12px; color: var(--p-muted-text); }
+@container (max-width: 520px) {
+    .mk-links { display: none; }
+    .mk-hero h3 { font-size: 27px; }
+    .mk-cards { grid-template-columns: 1fr; }
+}
+
+/* App mobile */
+.mk-phone {
+    width: 300px;
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 34px;
+    padding: 10px;
+    background: #1b1b1d;
+}
+.mk-app {
+    position: relative;
+    border-radius: 26px;
+    overflow: hidden;
+    height: 560px;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+.mk-app-head { padding: 34px 18px 12px; }
+.mk-app-head span { font-size: 12px; color: var(--p-muted-text); }
+.mk-app-head h3 { margin: 2px 0 0; font-size: 26px; letter-spacing: -0.02em; }
+.mk-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 18px 12px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--p-border);
+    border-radius: 10px;
+    color: var(--p-muted-text);
+    background: var(--p-surface);
+}
+.mk-plus .i { width: 16px; height: 16px; }
+.mk-tasks { list-style: none; margin: 0; padding: 0 18px; display: grid; gap: 8px; }
+.mk-tasks li {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--p-surface);
+    border-radius: 10px;
+    line-height: 1.3;
+}
+.mk-dot .i { width: 18px; height: 18px; color: var(--p-muted-text); }
+.mk-dot.ok .i { color: var(--p-success); }
+.mk-dot.warn .i { color: var(--p-warning); }
+.mk-dot.err .i { color: var(--p-error); }
+.mk-chip {
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1.5px solid currentColor;
+    color: var(--p-muted-text);
+}
+.mk-chip.ok { color: var(--p-success); }
+.mk-chip.warn { color: var(--p-warning); }
+.mk-chip.err { color: var(--p-error); }
+.mk-fab {
+    position: absolute;
+    right: 18px;
+    bottom: 78px;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: var(--p-primary);
+    color: var(--p-on-primary);
+}
+.mk-tab {
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 8px 8px 18px;
+    background: var(--p-surface);
+    border-top: 1px solid var(--p-border);
+    font-size: 11px;
+    color: var(--p-muted-text);
+    text-align: center;
+}
+.mk-tab span { display: grid; justify-items: center; gap: 3px; }
+.mk-tab .on { color: var(--p-primary); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+    .mk-landing, .mk-app { transition: none; }
+}

@@ -1,0 +1,27 @@
+name: Bug
+description: Qualcosa non funziona come descritto nel PRD o nel design
+labels: ["bug"]
+body:
+    - type: textarea
+      id: what
+      attributes:
+          label: Cosa succede
+      validations:
+          required: true
+    - type: textarea
+      id: steps
+      attributes:
+          label: Come riprodurlo
+          placeholder: "1. Apri …\n2. Premi …"
+      validations:
+          required: true
+    - type: textarea
+      id: expected
+      attributes:
+          label: Cosa dovrebbe succedere
+      validations:
+          required: true
+    - type: input
+      id: env
+      attributes:
+          label: Browser e dimensione dello schermo

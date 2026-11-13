@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hue UI · Design system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/hue.css">
+<style>
+/* impaginazione della tavola, non fa parte del sistema */
+.doc { max-width: 1240px; margin: 0 auto; padding: var(--s7) var(--s6) var(--s8); }
+.doc-head { display: flex; align-items: end; justify-content: space-between; gap: var(--s5); padding-bottom: var(--s5); border-bottom: 2px solid var(--text); }
+.doc-head h1 { margin: 0; font-size: var(--fs-61); line-height: 1; letter-spacing: -0.04em; font-variation-settings: "opsz" 96; }
+.doc-head p { margin: 0; max-width: 52ch; color: var(--text-2); }
+.board { margin-top: var(--s8); }
+.board > h2 { margin: 0 0 var(--s2); font-size: var(--fs-31); letter-spacing: -0.02em; font-variation-settings: "opsz" 96; }
+.board > .lede { margin: 0 0 var(--s6); color: var(--text-2); max-width: 70ch; }
+.sec { display: grid; grid-template-columns: 220px 1fr; gap: var(--s6); padding: var(--s6) 0; border-top: 1px solid var(--divider); }
+.sec > header h3 { margin: 0 0 var(--s2); font-size: var(--fs-20); }
+.sec > header p { margin: 0; font-size: 0.875rem; color: var(--text-2); }
+.grid { display: grid; gap: var(--s4); }
+.row { display: flex; flex-wrap: wrap; gap: var(--s4); align-items: center; }
+.cap { display: block; margin-top: var(--s2); font-size: var(--fs-13); color: var(--text-2); }
+.state { display: grid; gap: var(--s2); justify-items: start; }
+
+/* colori */
+.tokens { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--s4); }
+.tok { border: 1px solid var(--divider); border-radius: var(--r-ctrl); overflow: hidden; }
+.tok__sw { height: 72px; background: var(--v); display: flex; align-items: end; padding: var(--s2) var(--s3); font-weight: 700; font-size: 1.25rem; }
+.tok__body { padding: var(--s3); font-size: 0.875rem; line-height: 1.4; }
+.tok__body b { display: block; font-size: 0.9375rem; }
+.tok__body code { font-size: var(--fs-13); }
+.ratio-ok { font-weight: 600; }
+.ratio-deco { color: var(--text-2); }
+
+/* tipografia */
+.type-row { display: grid; grid-template-columns: 120px 1fr; gap: var(--s4); align-items: baseline; padding: var(--s3) 0; border-bottom: 1px solid var(--divider); }
+.type-row code { font-size: var(--fs-13); color: var(--text-2); }
+
+/* spaziature */
+.space { display: grid; grid-template-columns: 60px 1fr; gap: var(--s3); align-items: center; font-size: 0.875rem; }
+.space i { display: block; height: 16px; background: var(--text); border-radius: 2px; }
+
+.icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--s2); }
+.icons div { display: grid; justify-items: center; gap: var(--s2); padding: var(--s3); border: 1px solid var(--divider); border-radius: var(--r-ctrl); font-size: var(--fs-13); color: var(--text-2); }
+.icons .i { color: var(--text); }
+
+.demo-bands { border-radius: var(--r-ctrl); overflow: hidden; box-shadow: 0 0 0 1px var(--divider); }
+.demo-dark { padding: var(--s5); border-radius: var(--r-ctrl); background: #14161b; }
+.forced { outline: 2px solid var(--focus-inner) !important; outline-offset: 2px; box-shadow: 0 0 0 5px var(--focus-outer) !important; }
+.hov.btn { border-color: var(--text); background: var(--surface-2); }
+.hov.btn--primary { background: var(--action-hover); border-color: var(--action-hover); }
+.hov.ib { background: var(--surface-2); }
+.static-dialog { display: block; position: static; }
+
+@media (max-width: 860px) {
+    .doc { padding: var(--s5) var(--s4) var(--s7); }
+    .doc-head { flex-direction: column; align-items: start; }
+    .doc-head h1 { font-size: 2.75rem; }
+    .sec { grid-template-columns: 1fr; gap: var(--s4); }
+    .band { grid-template-columns: 1fr auto; padding: var(--s4); }
+    .band .proof { grid-column: 1 / -1; order: 3; }
+}
+</style>
+</head>
+<body>
+<div class="doc">
+    <header class="doc-head">
+        <h1>Hue UI<br>design system</h1>
+        <p>Direzione B, Prova. L'involucro è neutro e fisso: i colori generati compaiono solo su fasce, tessere e mockup. I rapporti di contrasto di questa pagina sono calcolati dal browser con la formula WCAG 2.1.</p>
+    </header>
+
+    <!-- ===================== FONDAMENTI ===================== -->
+    <section class="board" aria-labelledby="b1">
+        <h2 id="b1">Fondamenti</h2>
+        <p class="lede">Pochi valori, ognuno con un ruolo. Nessun colore di brand: il carattere viene dalla tipografia e dalla tessera di prova.</p>
+
+        <div class="sec">
+            <header><h3>Colore</h3><p>Rapporto misurato sul bianco della pagina. Sotto 3:1 il token è solo decorativo e non porta informazioni.</p></header>
+            <div class="tokens">
+                <div class="tok"><div class="tok__sw" style="--v:#202124;color:#fff">Aa</div><div class="tok__body"><b>text / action</b><code>--grey-900 #202124</code><br><span class="ratio-ok" data-ratio="#202124"></span>, testo e azione principale</div></div>
+                <div class="tok"><div class="tok__sw" style="--v:#55585e;color:#fff">Aa</div><div class="tok__body"><b>text-2</b><code>--grey-700 #55585E</code><br><span class="ratio-ok" data-ratio="#55585e"></span>, testo secondario</div></div>
+                <div class="tok"><div class="tok__sw" style="--v:#7d8086;color:#fff"></div><div class="tok__body"><b>control-border</b><code>--grey-500 #7D8086</code><br><span class="ratio-ok" data-ratio="#7d8086"></span>, bordi di controlli (minimo 3:1)</div></div>
+                <div class="tok"><div class="tok__sw" style="--v:#dcdde0"></div><div class="tok__body"><b>divider</b><code>--grey-200 #DCDDE0</code><br><span class="ratio-deco" data-ratio="#dcdde0"></span>, solo divisori</div></div>
+                <div class="tok"><div class="tok__sw" style="--v:#f3f3f4"></div><div class="tok__body"><b>surface-2</b><code>--grey-50 #F3F3F4</code><br>superfici di hover e selettori; testo su di essa <span class="ratio-ok" data-ratio="#202124" data-on="#f3f3f4"></span></div></div>
+                <div class="tok"><div class="tok__sw" style="--v:#ffffff;box-shadow:inset 0 -1px 0 var(--divider)"></div><div class="tok__body"><b>page</b><code>--white #FFFFFF</code><br>pagina, pannelli, pillole</div></div>
+                <div class="tok"><div class="tok__sw" style="--v:#a4231b;color:#fff">Aa</div><div class="tok__body"><b>danger</b><code>--red-700 #A4231B</code><br><span class="ratio-ok" data-ratio="#a4231b"></span>, solo esiti "Fails" ed errori</div></div>
+                <div class="tok"><div class="tok__sw" style="--v:#fdecea;color:#a4231b">Aa</div><div class="tok__body"><b>danger-bg</b><code>--red-50 #FDECEA</code><br>danger su di esso <span class="ratio-ok" data-ratio="#a4231b" data-on="#fdecea"></span></div></div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Tipografia</h3><p>Bricolage Grotesque, una sola famiglia variabile con dimensioni ottiche. Scala 1,25 su base 16. Cifre tabellari solo dove i numeri si confrontano.</p></header>
+            <div>
+                <div class="type-row"><code>61 / 700</code><span style="font-size:var(--fs-61);font-weight:700;letter-spacing:-.04em;line-height:1;font-variation-settings:'opsz' 96">Aa</span></div>
+                <div class="type-row"><code>31 / 600 tnum</code><span class="num" style="font-size:var(--fs-31);font-weight:600;letter-spacing:-.02em;font-variation-settings:'opsz' 96">12.4:1</span></div>
+                <div class="type-row"><code>25 / 800</code><span style="font-size:var(--fs-25);font-weight:800;letter-spacing:-.03em;white-space:nowrap">Hue UI</span></div>
+                <div class="type-row"><code>20 / 700</code><span style="font-size:var(--fs-20);font-weight:700">Background · Contrast checks</span></div>
+                <div class="type-row"><code>16 / 400</code><span>Random palettes for interfaces. Every color has a job, every pair is readable.</span></div>
+                <div class="type-row"><code>15 / 600</code><span style="font-size:.9375rem;font-weight:600">Generate · Undo · Share</span></div>
+                <div class="type-row"><code>13 / 600</code><span style="font-size:var(--fs-13);font-weight:600">AA (UI) · Text on Background</span></div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Spaziatura e raggi</h3><p>Base 4. Tre raggi con ruoli diversi: 10 px per controlli, tessere e pannelli; 6 px per focus ed etichette interne; la forma a pillola solo per le etichette di esito. Così la pillola non è ovunque.</p></header>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--s6)">
+                <div class="grid" style="gap: var(--s2)">
+                    <div class="space"><code>s1 4</code><i style="width:4px"></i></div>
+                    <div class="space"><code>s2 8</code><i style="width:8px"></i></div>
+                    <div class="space"><code>s3 12</code><i style="width:12px"></i></div>
+                    <div class="space"><code>s4 16</code><i style="width:16px"></i></div>
+                    <div class="space"><code>s5 24</code><i style="width:24px"></i></div>
+                    <div class="space"><code>s6 32</code><i style="width:32px"></i></div>
+                    <div class="space"><code>s7 48</code><i style="width:48px"></i></div>
+                    <div class="space"><code>s8 64</code><i style="width:64px"></i></div>
+                </div>
+                <div class="row" style="align-items:start">
+                    <div class="state"><span class="btn">Ctrl 10</span><span class="cap">Controlli, tessere, pannelli</span></div>
+                    <div class="state"><span style="display:block;width:64px;height:44px;border-radius:var(--r-focus);outline:2px solid var(--focus-inner);outline-offset:2px"></span><span class="cap">Focus 6</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Griglia</h3><p>Desktop: tutto in una schermata, senza scroll da 760 px di altezza in su. Fasce e azioni a sinistra (11/20), a destra contrasti con righello e poi anteprima, che si rimpicciolisce per entrare nello spazio libero (9/20). Sotto 760 px di larghezza: righe compatte, una colonna e barra delle azioni fissa in basso.</p></header>
+            <div style="display:grid;grid-template-columns:11fr 9fr;gap:2px;height:180px;border-radius:var(--r-ctrl);overflow:hidden;font-size:var(--fs-13);font-weight:600">
+                <div style="display:grid;grid-template-rows:repeat(5,1fr) 30px;gap:2px"><span style="background:#e7e8ea;padding:4px 8px">Background</span><span style="background:#e7e8ea;padding:4px 8px">Surface</span><span style="background:#e7e8ea;padding:4px 8px">Text</span><span style="background:#e7e8ea;padding:4px 8px">Primary</span><span style="background:#e7e8ea;padding:4px 8px">Accent</span><span style="background:#cfd1d5;padding:4px 8px">Generate · Undo</span></div>
+                <div style="display:grid;grid-template-rows:auto 1fr;gap:2px"><span style="background:var(--surface-2);padding:8px;box-shadow:inset 0 0 0 1px var(--divider);height:70px">Contrast checks + righello</span><span style="background:var(--surface-2);padding:8px;box-shadow:inset 0 0 0 1px var(--divider)">Preview (si adatta)</span></div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Icone</h3><p>Una sola famiglia: griglia 24, tratto 1,8, estremità arrotondate. Sempre accanto a un testo o con un'etichetta accessibile.</p></header>
+            <div class="icons">
+                <div><span data-icon="refresh"></span>refresh</div><div><span data-icon="undo"></span>undo</div><div><span data-icon="lock"></span>lock</div><div><span data-icon="unlock"></span>unlock</div>
+                <div><span data-icon="copy"></span>copy</div><div><span data-icon="link"></span>link</div><div><span data-icon="keyboard"></span>keyboard</div><div><span data-icon="help"></span>help</div>
+                <div><span data-icon="check"></span>check</div><div><span data-icon="x"></span>x</div><div><span data-icon="adjust"></span>adjust</div><div><span data-icon="pencil"></span>pencil</div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Focus e movimento</h3><p>Doppio anello: interno scuro 2 px, esterno bianco 5 px. Si vede su bianco, su nero e su qualunque colore saturo. Transizioni di colore 200 ms, di stato 120 ms; nessuna con movimento ridotto.</p></header>
+            <div class="row">
+                <div class="demo-bands" style="display:flex">
+                    <span style="background:#ffffff;padding:20px"><span class="btn forced">On white</span></span>
+                    <span style="background:#14161b;padding:20px"><span class="btn forced">On dark</span></span>
+                    <span style="background:#e2462b;padding:20px"><span class="btn forced">On red</span></span>
+                    <span style="background:#7d8086;padding:20px"><span class="btn forced">On grey</span></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== COMPONENTI ===================== -->
+    <section class="board" aria-labelledby="b2">
+        <h2 id="b2">Componenti</h2>
+        <p class="lede">Ogni componente con i suoi stati. Fasce e tessere usano una palette d'esempio fissa; i controlli restano identici su qualunque colore. Testi uguali a quelli del prototipo (<code>schermate/home.html</code>) e di <code>docs/02 - Struttura e testi.md</code>.</p>
+
+        <div class="sec">
+            <header><h3>Pulsanti e azioni</h3><p>Un solo pulsante principale: Generate, sotto la palette, con il suggerimento "or press Space". Undo senza cronologia è <code>aria-disabled</code> e mostra il motivo al passaggio e al focus.</p></header>
+            <div class="grid">
+                <div class="row">
+                    <div class="state"><button class="btn btn--primary"><span data-icon="refresh"></span>Generate</button><span class="cap">Primary, default</span></div>
+                    <div class="state"><button class="btn btn--primary hov"><span data-icon="refresh"></span>Generate</button><span class="cap">Hover</span></div>
+                    <div class="state"><button class="btn btn--primary forced"><span data-icon="refresh"></span>Generate</button><span class="cap">Focus</span></div>
+                    <div class="state"><span class="hint">or press <kbd class="key">Space</kbd></span><span class="cap">Suggerimento (nascosto su touch)</span></div>
+                </div>
+                <div class="row" style="margin-top: var(--s5)">
+                    <div class="state"><button class="btn"><span data-icon="link"></span>Share</button><span class="cap">Secondary</span></div>
+                    <div class="state"><button class="btn hov"><span data-icon="link"></span>Share</button><span class="cap">Hover</span></div>
+                    <div class="state"><button class="btn forced"><span data-icon="link"></span>Share</button><span class="cap">Focus</span></div>
+                    <div class="state"><button class="btn show-tip" aria-disabled="true"><span data-icon="undo"></span>Undo<span class="tip">Nothing to undo yet.</span></button><span class="cap">Inattivo, con suggerimento</span></div>
+                    <div class="state"><button class="btn btn--danger">Apply fix</button><span class="cap">Correzione (solo nel Why? di un esito che non passa)</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Pillola dei controlli</h3><p>Bianca con bordo da 3,96:1, leggibile su qualunque fascia. Edit (matita), Lock (con tooltip "Lock color (L)") e Why?. Stato attivo: riempimento scuro, 16:1. Target da 44 px.</p></header>
+            <div class="row">
+                <div class="state"><div class="ctrl"><button class="ib" aria-label="Edit" data-icon="pencil"></button><button class="ib" aria-pressed="false" aria-label="Lock" data-icon="unlock"></button><button class="why" aria-expanded="false">Why?</button></div><span class="cap">Default</span></div>
+                <div class="state"><div class="ctrl"><button class="ib hov" aria-label="Edit" data-icon="pencil"></button><button class="ib" aria-pressed="true" aria-label="Lock" data-icon="lock"></button><button class="why" aria-expanded="true">Why?</button></div><span class="cap">Hover su Edit, bloccato, Why? aperto</span></div>
+                <div class="state"><div class="ctrl"><button class="ib forced" aria-label="Edit" data-icon="pencil"></button><button class="ib" aria-pressed="false" aria-label="Lock" data-icon="unlock"></button><button class="why">Why?</button></div><span class="cap">Focus</span></div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Tessera di prova</h3><p>Nei colori della coppia più debole ci sono solo "Aa" e il rapporto, entrambi da 24 px in su. Il giudizio a parole e il nome della coppia stanno in un'etichetta bianca a 16:1, sempre leggibile.</p></header>
+            <div class="row">
+                <div class="proof" style="--pb:#f2f4f3;--pf:#1b2421;--on:#000"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio" data-live="#1b2421|#f2f4f3"></span><span class="proof__meta"><span class="proof__verdict"><span data-icon="check" data-size="14"></span>Very easy to read<small>AAA</small></span><span class="proof__pair">Text on Background</span></span></div>
+                <div class="proof" style="--pb:#f2f4f3;--pf:#686f6d;--on:#000"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio" data-live="#686f6d|#f2f4f3"></span><span class="proof__meta"><span class="proof__verdict"><span data-icon="check" data-size="14"></span>Easy to read<small>AA</small></span><span class="proof__pair">Muted text on Background</span></span></div>
+                <div class="proof" style="--pb:#f2f4f3;--pf:#b0532c;--on:#000"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio" data-live="#b0532c|#f2f4f3"></span><span class="proof__meta"><span class="proof__verdict"><span data-icon="check" data-size="14"></span>Easy to spot<small>UI</small></span><span class="proof__pair">Accent on Background</span></span></div>
+                <div class="proof" data-level="Fails" style="--pb:#ffffff;--pf:#8fa8ff;--on:#000"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio" data-live="#8fa8ff|#ffffff"></span><span class="proof__meta"><span class="proof__verdict"><span data-icon="x" data-size="14"></span>Hard to spot<small>Fails</small></span><span class="proof__pair">Primary on Background</span></span></div>
+            </div>
+            <span></span>
+            <div class="grid" style="grid-column: 2; margin-top: calc(-1 * var(--s3))">
+                <table style="border-collapse:collapse;font-size:.875rem;max-width:620px">
+                    <tr><th style="text-align:left;padding:4px 16px 4px 0">Giudizio</th><th style="text-align:left;padding:4px 16px 4px 0">Sigla</th><th style="text-align:left">Quando</th></tr>
+                    <tr><td style="padding:4px 16px 4px 0">Very easy to read</td><td>AAA</td><td>testo, da 7:1</td></tr>
+                    <tr><td style="padding:4px 16px 4px 0">Easy to read</td><td>AA</td><td>testo, da 4.5:1</td></tr>
+                    <tr><td style="padding:4px 16px 4px 0">Easy to spot</td><td>UI</td><td>pulsanti, icone, stati, da 3:1</td></tr>
+                    <tr><td style="padding:4px 16px 4px 0">Hard to read / Hard to spot</td><td>Fails</td><td>sotto la soglia della coppia</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Fascia</h3><p>Un ruolo per fascia. Nome e codice sono in nero o bianco, quello con più contrasto (almeno 4,58:1): restano leggibili anche quando la coppia fallisce. Clic sul codice: copia. Stati: normale, bloccato, corretto dal generatore.</p></header>
+            <div class="demo-bands">
+                <div class="band" style="--c:#f2f4f3;--on:#000000">
+                    <div class="band__who"><p class="band__role">Background</p><button class="band__hex"><span>#F2F4F3</span><span data-icon="copy" data-size="16"></span></button></div>
+                    <div class="proof" style="--pb:#f2f4f3;--pf:#686f6d"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio" data-live="#686f6d|#f2f4f3"></span><span class="proof__meta"><span class="proof__verdict"><span data-icon="check" data-size="14"></span>Easy to read<small>AA</small></span><span class="proof__pair">Muted text on Background</span></span></div>
+                    <div class="ctrl"><button class="ib" aria-label="Edit" data-icon="pencil"></button><button class="ib" aria-pressed="false" aria-label="Lock" data-icon="unlock"></button><button class="why">Why?</button></div>
+                </div>
+                <div class="band" style="--c:#1b2421;--on:#ffffff">
+                    <div class="band__who"><p class="band__role">Text</p><button class="band__hex"><span>#1B2421</span><span data-icon="copy" data-size="16"></span></button><span class="band__note"><span data-icon="lock" data-size="14"></span>Locked</span></div>
+                    <div class="proof" style="--pb:#f2f4f3;--pf:#1b2421;--on:#ffffff"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio" data-live="#1b2421|#f2f4f3"></span><span class="proof__meta"><span class="proof__verdict"><span data-icon="check" data-size="14"></span>Very easy to read<small>AAA</small></span><span class="proof__pair">Text on Background</span></span></div>
+                    <div class="ctrl"><button class="ib" aria-label="Edit" data-icon="pencil"></button><button class="ib" aria-pressed="true" aria-label="Lock" data-icon="lock"></button><button class="why">Why?</button></div>
+                </div>
+                <div class="band" style="--c:#2c6a58;--on:#ffffff">
+                    <div class="band__who"><p class="band__role">Primary</p><button class="band__hex"><span>#2C6A58</span><span data-icon="copy" data-size="16"></span></button><span class="band__note"><span data-icon="adjust" data-size="14"></span>Adjusted for contrast</span></div>
+                    <div class="proof" style="--pb:#2c6a58;--pf:#ffffff;--on:#ffffff"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio" data-live="#ffffff|#2c6a58"></span><span class="proof__meta"><span class="proof__verdict"><span data-icon="check" data-size="14"></span>Easy to read<small>AA</small></span><span class="proof__pair">On primary on Primary</span></span></div>
+                    <div class="ctrl"><button class="ib" aria-label="Edit" data-icon="pencil"></button><button class="ib" aria-pressed="false" aria-label="Lock" data-icon="unlock"></button><button class="why">Why?</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Fascia su mobile</h3><p>Sotto 760 px la fascia diventa una riga compatta da circa 92 px: nome, codice ed esito in un'etichetta bianca. Così i 5 colori stanno nel primo schermo. La tessera compare quando si apre Why?.</p></header>
+            <div style="max-width:390px" class="demo-bands">
+                <div class="band" style="--c:#2c6a58;--on:#ffffff;grid-template-columns:1fr auto;padding:8px 16px;gap:8px">
+                    <div class="band__who"><p class="band__role" style="font-size:1.0625rem">Primary</p><button class="band__hex" style="min-height:36px"><span>#2C6A58</span><span data-icon="copy" data-size="16"></span></button><span style="display:inline-flex;align-items:center;gap:4px;padding:1px 8px 2px;border-radius:6px;background:#fff;color:var(--text);font-size:var(--fs-13)"><span data-icon="check" data-size="13"></span><b data-live="#ffffff|#2c6a58"></b> Easy to read</span></div>
+                    <div class="ctrl" style="align-self:start"><button class="ib" aria-label="Edit" data-icon="pencil"></button><button class="ib" aria-pressed="false" aria-label="Lock" data-icon="unlock"></button><button class="why" style="width:44px;padding:0;font-size:var(--fs-13)">Why?</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Campo HEX</h3><p>Si apre dalla matita, al posto di nome e codice. Accetta #RRGGBB, RRGGBB e #RGB. Anteprima mentre si scrive; l'errore è annunciato (<code>role="alert"</code>) e resta accanto al campo. Invio o clic fuori applicano un codice valido; Esc annulla.</p></header>
+            <div class="row" style="align-items:stretch">
+                <div class="band" style="--c:#2c6a58;--on:#ffffff;grid-template-columns:auto;border-radius:var(--r-ctrl)">
+                    <div class="hexedit"><label class="hexedit__label" for="h1">Primary color, hex code</label><input id="h1" value="#2C6A58"><span class="hexedit__msg">Enter to apply, Esc to cancel</span></div>
+                </div>
+                <div class="band" style="--c:#3e5bd0;--on:#ffffff;grid-template-columns:auto;border-radius:var(--r-ctrl)">
+                    <div class="hexedit"><label class="hexedit__label" for="h2">Primary color, hex code</label><input id="h2" value="#3e5bd0" class="forced"><span class="hexedit__msg">Enter to apply, Esc to cancel</span></div>
+                </div>
+                <div class="band" style="--c:#2c6a58;--on:#ffffff;grid-template-columns:auto;border-radius:var(--r-ctrl)">
+                    <div class="hexedit"><label class="hexedit__label" for="h3">Primary color, hex code</label><input id="h3" value="#3e5bd" aria-invalid="true" aria-describedby="h3e"><span class="hexedit__msg hexedit__msg--error" id="h3e"><span data-icon="x" data-size="15"></span>Use a hex code like #3E5BD0.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Pannello Why?</h3><p>Non modale, si apre vicino al pulsante (verso l'alto per le ultime due fasce). Quattro forme: passa AAA, passa AA, colore corretto, non passa con la correzione calcolata per quella coppia.</p></header>
+            <div class="row" style="align-items:start">
+                <div class="whypanel"><p class="whypanel__title"><span>Text on Background</span><span class="num" data-live="#1b2421|#f2f4f3"></span></p><p>Body text needs at least 4.5:1 to pass WCAG AA, and 7:1 for AAA. This pair passes both, so it stays readable on bright screens and for people with low vision.</p></div>
+                <div class="whypanel"><p class="whypanel__title"><span>Muted text on Background</span><span class="num" data-live="#686f6d|#f2f4f3"></span></p><p>Body text needs at least 4.5:1 to pass WCAG AA. This pair passes AA. It would need 7:1 for AAA.</p></div>
+                <div class="whypanel"><p class="whypanel__title"><span>Primary was adjusted</span></p><p>We darkened it a little, from #4A8F7B to #2C6A58. White text on your buttons now reaches <span data-live="#ffffff|#2c6a58"></span>. The hue is the same; only the lightness changed.</p><div class="whypanel__pair"><span class="whypanel__sw" style="background:#4a8f7b"></span><span class="num">#4A8F7B</span><span>to</span><span class="whypanel__sw" style="background:#2c6a58"></span><span class="num">#2C6A58</span></div></div>
+                <div class="whypanel whypanel--fail"><p class="whypanel__title"><span>Primary on Background</span><span class="num" data-live="#8fa8ff|#ffffff"></span></p><p>Your locked Background and your locked Primary are too close: <span data-live="#8fa8ff|#ffffff"></span>. Buttons and other controls need 3:1.</p><div class="whypanel__fix"><span><b>Fix:</b> darken Primary to <b class="num">#7B90DB</b> (<span data-live="#7b90db|#ffffff"></span>).</span><button class="btn btn--danger">Apply fix</button></div></div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Righello e contrasti</h3><p>Il righello spiega cosa significa un rapporto: scala logaritmica da 1:1 a 21:1, tacche a 3 (UI), 4,5 (AA) e 7 (AAA), un punto per coppia disegnato con i suoi due colori. Sotto, le 8 coppie come righe-pulsante da 44 px: un clic apre il Why?.</p></header>
+            <div class="grid" style="gap:var(--s4);max-width:600px">
+                <div class="ruler">
+                    <p class="ruler__sum"><span data-icon="check" data-size="16"></span>All 8 pairs pass</p>
+                    <p class="ruler__help">A contrast ratio says how far apart two colors are: <b>1:1</b> is the same color, <b>21:1</b> is black on white. Text needs <b>4.5:1</b>; buttons and icons need <b>3:1</b>.</p>
+                    <div class="ruler__bar" id="ds-ruler" aria-hidden="true"><div class="ruler__track"></div><span class="ruler__tick" data-r="1" style="transform:none">1:1</span><span class="ruler__tick" data-r="3"><b>3</b> UI</span><span class="ruler__tick" data-r="4.5"><b>4.5</b> AA</span><span class="ruler__tick" data-r="7"><b>7</b> AAA</span><span class="ruler__tick" data-r="21" style="transform:translateX(-100%)">21:1</span></div>
+                </div>
+                <ul class="checks">
+                    <li><button class="check"><span>Text on Background</span><span class="check__ratio" data-live="#1b2421|#f2f4f3"></span><span class="lv"><span data-icon="check" data-size="14"></span>AAA</span></button></li>
+                    <li><button class="check" aria-expanded="true"><span>Muted text on Background</span><span class="check__ratio" data-live="#686f6d|#f2f4f3"></span><span class="lv"><span data-icon="check" data-size="14"></span>AA</span></button></li>
+                    <li><button class="check"><span>Accent on Background</span><span class="check__ratio" data-live="#b0532c|#f2f4f3"></span><span class="lv"><span data-icon="check" data-size="14"></span>UI</span></button></li>
+                    <li data-level="Fails"><button class="check"><span>Primary on Background</span><span class="check__ratio" data-live="#8fa8ff|#ffffff"></span><span class="lv" data-level="Fails"><span data-icon="x" data-size="14"></span>Fails</span></button></li>
+                </ul>
+                <div class="seg" role="tablist" aria-label="Preview" style="justify-self:start"><button role="tab" aria-selected="true">Landing page</button><button role="tab" aria-selected="false" tabindex="-1">Mobile app</button></div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Toast e dialog</h3><p>Toast in basso al centro, annunciati da un'unica regione <code>aria-live</code>. Quelli informativi spariscono dopo 4 secondi; quello di errore contiene un'istruzione e resta finché non si chiude. Il dialog usa &lt;dialog&gt; nativo e permette di spegnere le scorciatoie a un tasto (WCAG 2.1.4).</p></header>
+            <div class="row" style="align-items:start">
+                <div class="grid" style="gap:var(--s3)">
+                    <div class="toast"><span class="toast__swatch" style="background:#2c6a58"></span><span>Copied #2C6A58</span></div>
+                    <div class="toast"><span data-icon="link"></span><span>Link copied. Anyone with it sees this palette.</span></div>
+                    <div class="toast"><span data-icon="lock"></span><span>All colors are locked. Unlock one to generate.</span></div>
+                    <div class="toast"><span data-icon="check"></span><span>Fix applied. Primary is now #7B90DB.</span></div>
+                    <div class="toast toast--error"><span data-icon="alert"></span><span>Couldn't copy. Select the code and press Ctrl+C.</span><button class="toast__close" aria-label="Dismiss"><span data-icon="x" data-size="18"></span></button></div>
+                </div>
+                <dialog class="dialog static-dialog" open aria-labelledby="dk">
+                    <div class="dialog__head"><h2 id="dk">Keyboard shortcuts</h2><button class="btn btn--icon" aria-label="Close"><span data-icon="x"></span></button></div>
+                    <dl class="keys">
+                        <dt><kbd class="key">Space</kbd></dt><dd>Generate a new palette</dd>
+                        <dt><kbd class="key">Ctrl</kbd> + <kbd class="key">Z</kbd></dt><dd>Undo</dd>
+                        <dt><kbd class="key">L</kbd></dt><dd>Lock or unlock the focused color</dd>
+                        <dt><kbd class="key">C</kbd></dt><dd>Copy the focused color</dd>
+                        <dt><kbd class="key">?</kbd></dt><dd>Show this list</dd>
+                        <dt><kbd class="key">Esc</kbd></dt><dd>Close a panel</dd>
+                    </dl>
+                    <label class="switch"><span>Single-key shortcuts (Space, L, C, ?)</span><input type="checkbox" checked></label>
+                </dialog>
+            </div>
+        </div>
+
+        <div class="sec">
+            <header><h3>Barre</h3><p>Desktop: header con marchio, frase e azioni secondarie; azioni principali sotto la palette. Mobile: header con marchio e frase; Undo, Generate e Share in una barra fissa in basso, sempre a portata di pollice.</p></header>
+            <div class="grid" style="gap:var(--s4)">
+                <div style="display:flex;align-items:center;gap:16px;padding:8px 24px;border:1px solid var(--divider);border-radius:var(--r-ctrl)"><span style="font-size:var(--fs-25);font-weight:800;letter-spacing:-.03em;white-space:nowrap">Hue UI</span><span style="color:var(--text-2);font-size:.9375rem">Random palettes for interfaces. Every color has a job, every pair is readable.</span><span style="margin-left:auto;display:flex;gap:8px"><span class="btn"><span data-icon="keyboard"></span>Shortcuts</span><span class="btn"><span data-icon="link"></span>Share</span></span></div>
+                <div style="display:flex;gap:8px;max-width:390px;padding:12px 16px;border:1px solid var(--divider);border-radius:var(--r-ctrl)"><span class="btn" aria-disabled="true" style="width:56px;min-height:56px;padding:0"><span data-icon="undo"></span></span><span class="btn btn--primary" style="flex:1;min-height:56px"><span data-icon="refresh"></span>Generate</span><span class="btn" style="width:56px;min-height:56px;padding:0"><span data-icon="link"></span></span></div>
+            </div>
+        </div>
+    </section>
+</div>
+<script src="assets/icons.js"></script>
+<script>
+// rapporti calcolati dal browser, non scritti a mano
+(function () {
+    const lin = (v) => ((v /= 255) <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+    const L = (h) => {
+        const c = [1, 3, 5].map((i) => lin(parseInt(h.slice(i, i + 2), 16)));
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    };
+    const ratio = (a, b) => {
+        const [x, y] = [L(a), L(b)].sort((p, q) => q - p);
+        return (x + 0.05) / (y + 0.05);
+    };
+    const fmt = (r) => (Math.floor(r * 100) / 100).toFixed(2).replace(".", ",") + ":1";
+    document.querySelectorAll("[data-ratio]").forEach((el) => (el.textContent = fmt(ratio(el.dataset.ratio, el.dataset.on || "#ffffff"))));
+    document.querySelectorAll("[data-live]").forEach((el) => {
+        const [a, b] = el.dataset.live.split("|");
+        el.textContent = (Math.floor(ratio(a, b) * 10) / 10).toFixed(1) + ":1";
+    });
+    // righello d'esempio: stessa scala del prototipo
+    const x = (r) => (Math.log(r) / Math.log(21)) * 100;
+    const bar = document.getElementById("ds-ruler");
+    if (bar) {
+        const track = bar.querySelector(".ruler__track");
+        [["fail", 1, 3], ["ui", 3, 4.5], ["aa", 4.5, 7], ["aaa", 7, 21]].forEach(([k, a, b]) => {
+            const z = document.createElement("span");
+            z.className = "ruler__zone ruler__zone--" + k;
+            z.style.width = (x(b) - x(a)).toFixed(2) + "%";
+            track.appendChild(z);
+        });
+        bar.querySelectorAll(".ruler__tick").forEach((tk) => (tk.style.left = x(Number(tk.dataset.r)).toFixed(2) + "%"));
+        [["#f2f4f3", "#1b2421", 0], ["#f2f4f3", "#686f6d", 0], ["#f2f4f3", "#b0532c", 1], ["#2c6a58", "#ffffff", 0]].forEach(([bg, fg, row]) => {
+            const d = document.createElement("span");
+            d.className = "ruler__dot";
+            d.style.left = x(ratio(fg, bg)).toFixed(2) + "%";
+            d.style.top = 28 - row * 14 + "px";
+            d.style.setProperty("--db", bg);
+            d.style.setProperty("--df", fg);
+            bar.appendChild(d);
+        });
+    }
+})();
+</script>
+</body>
+</html>

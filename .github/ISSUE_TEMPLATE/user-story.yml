@@ -1,0 +1,31 @@
+name: User story
+description: Una storia del PRD (docs/03 - PRD.md)
+title: "US"
+labels: ["story"]
+body:
+    - type: input
+      id: id
+      attributes:
+          label: ID e priorità
+          placeholder: "US8 · Must"
+      validations:
+          required: true
+    - type: textarea
+      id: story
+      attributes:
+          label: Story
+          placeholder: "Come …, voglio …, per …"
+      validations:
+          required: true
+    - type: textarea
+      id: criteria
+      attributes:
+          label: Criteri di accettazione
+          description: Verificabili, uno per riga
+      validations:
+          required: true
+    - type: input
+      id: screen
+      attributes:
+          label: Schermata di riferimento
+          placeholder: "Figma: Desktop / 01 · prototipo HTML: design/schermate/home.html"

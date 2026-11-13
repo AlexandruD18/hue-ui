@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hue UI: random color palettes for interfaces</title>
+<meta name="description" content="Generate color palettes where every color has a role and every text pair passes WCAG contrast. Preview them on a real landing page and mobile app.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/hue.css">
+<link rel="stylesheet" href="../assets/mockups.css">
+<style>
+/* ===== Desktop: tutto in una schermata (da 760 px di altezza in su) ===== */
+.app { height: 100vh; min-height: 760px; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.top { display: flex; align-items: center; gap: var(--s4); min-height: 64px; padding: var(--s2) var(--s6); border-bottom: 1px solid var(--divider); }
+.mark { margin: 0; font-size: var(--fs-25); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.tagline { margin: 0; color: var(--text-2); font-size: 0.9375rem; }
+.top__actions { margin-left: auto; display: flex; gap: var(--s2); }
+.layout { display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 9fr); min-height: 0; }
+
+.palette { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; }
+.bands { list-style: none; margin: 0; padding: 0; display: grid; grid-template-rows: repeat(5, minmax(0, 1fr)); min-height: 0; }
+.band + .band { box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08); }
+.band .whypanel { position: absolute; right: var(--s6); top: calc(50% + 32px); z-index: 20; }
+.band .whypanel--up { top: auto; bottom: calc(50% + 32px); }
+.actions { display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s6); border-top: 1px solid var(--divider); }
+
+.side { border-left: 1px solid var(--divider); padding: var(--s4) var(--s6) var(--s3); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--s4); min-height: 0; }
+.side h2 { margin: 0; font-size: var(--fs-20); font-weight: 700; letter-spacing: -0.01em; }
+.side__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; }
+.checks li .whypanel { position: absolute; left: 0; top: calc(100% + 4px); z-index: 20; }
+.checks li .whypanel--right { left: auto; right: 0; }
+.preview { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--s2); min-height: 0; }
+.stage { min-height: 0; display: grid; place-items: center; border-radius: var(--r-ctrl); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--divider); overflow: hidden; }
+.stage [role="tabpanel"] { display: grid; place-items: center; width: 100%; height: 100%; padding: var(--s3); }
+.fit { position: relative; }
+.fit > * { transform-origin: top left; position: absolute; top: 0; left: 0; }
+.fit .mk-landing { border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px var(--divider); }
+.credits { display: flex; gap: var(--s4); flex-wrap: wrap; align-items: center; font-size: var(--fs-13); color: var(--text-2); }
+.credits a { color: inherit; display: inline-flex; align-items: center; min-height: 44px; }
+
+#toasts { position: fixed; left: 50%; bottom: var(--s5); transform: translateX(-50%); z-index: 50; }
+.dock { display: none; }
+
+/* ===== Altezze piccole: torna lo scroll, l'anteprima non scende sotto una misura leggibile ===== */
+@media (max-height: 759px) and (min-width: 761px) {
+    .app { height: auto; }
+    .bands { grid-template-rows: repeat(5, 128px); }
+    .stage { height: 380px; }
+}
+@media (max-width: 1180px) and (min-width: 761px) {
+    .tagline { display: none; }
+    .band { grid-template-columns: 1fr auto; padding: var(--s3) var(--s5); }
+    .band .proof { grid-column: 1; grid-row: 2; }
+    .band .ctrl { grid-row: 1 / span 2; grid-column: 2; }
+    .app { height: auto; }
+    .bands { grid-template-rows: none; }
+}
+
+/* ===== Mobile: righe compatte, tutti e 5 i colori nella prima schermata ===== */
+@media (max-width: 760px) {
+    html { scroll-padding-bottom: 96px; }
+    .app { height: auto; min-height: 0; display: block; }
+    .top { padding: var(--s3) var(--s4); flex-wrap: wrap; min-height: 0; }
+    .tagline { flex-basis: 100%; font-size: 0.875rem; }
+    .top__actions, .actions { display: none; }
+    .layout { display: block; }
+    .bands { display: block; }
+    .band { grid-template-columns: 1fr auto; padding: var(--s2) var(--s4); gap: var(--s2); min-height: 92px; }
+    .band__role { font-size: 1.0625rem; }
+    .band__hex { min-height: 36px; }
+    .band__grade {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 1px var(--s2) 2px;
+        border-radius: var(--r-focus);
+        background: var(--page);
+        color: var(--text);
+        font-size: var(--fs-13);
+    }
+    .band__grade .i { width: 13px; height: 13px; }
+    .band__grade[data-level="Fails"] { color: var(--danger); }
+    .band__who { grid-column: 1; grid-row: 1; }
+    .band .ctrl { grid-column: 2; grid-row: 1; align-self: start; margin-top: var(--s1); }
+    .band .proof { display: none; }
+    .band.is-open .proof { display: grid; grid-column: 1 / -1; }
+    .band .proof__aa { font-size: 2.75rem; }
+    .band .proof__ratio { font-size: 1.5rem; }
+    .band .ctrl .ib, .band .ctrl .why { width: 44px; height: 44px; min-height: 44px; padding: 0; font-size: var(--fs-13); }
+    .band .whypanel, .band .whypanel--up { position: static; grid-column: 1 / -1; width: auto; }
+    .band .hexedit { grid-column: 1; }
+    .side { border-left: 0; padding: var(--s5) var(--s4) 112px; display: grid; gap: var(--s6); }
+    .checks { grid-template-columns: 1fr; }
+    .checks li .whypanel, .checks li .whypanel--right { position: static; width: auto; margin: 0 0 var(--s3); }
+    .stage { min-height: 0; }
+    .stage [role="tabpanel"] { height: auto; }
+    .dock {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 30;
+        gap: var(--s2);
+        padding: var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom));
+        background: var(--page);
+        border-top: 1px solid var(--divider);
+    }
+    .dock .btn--primary { flex: 1; min-height: 56px; padding: 0 var(--s4); }
+    .dock .btn:not(.btn--primary) { width: 56px; min-height: 56px; padding: 0; }
+    .dock .tip { left: 0; transform: none; }
+    #toasts { bottom: 96px; width: calc(100vw - 32px); display: grid; justify-items: center; }
+}
+@media (hover: none) { [data-shortcuts], .hint--space { display: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+    <header class="top">
+        <h1 class="mark">Hue UI</h1>
+        <p class="tagline">Random palettes for interfaces. Every color has a job, every pair is readable.</p>
+        <div class="top__actions">
+            <button class="btn" type="button" data-shortcuts><span data-icon="keyboard"></span>Shortcuts</button>
+            <button class="btn" type="button" data-share aria-label="Share palette link"><span data-icon="link"></span>Share</button>
+        </div>
+    </header>
+
+    <div class="layout">
+        <main class="palette">
+            <h2 class="sr-only">Palette</h2>
+            <ul class="bands" aria-label="Palette">
+                <li class="band" data-role="background" style="--c: var(--p-background)">
+                    <div class="band__who"><p class="band__role">Background</p><button class="band__hex" type="button"><span></span><span data-icon="copy" data-size="16"></span></button><span class="band__grade"></span><span class="band__note" hidden></span></div>
+                    <div class="proof"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio"></span><span class="proof__meta"><span class="proof__verdict"></span><span class="proof__pair"></span></span></div>
+                    <div class="ctrl"><button class="ib" type="button" data-edit title="Edit color"><span data-icon="pencil"></span></button><button class="ib" type="button" data-lock title="Lock color (L)"></button><button class="why" type="button" data-why="background" aria-expanded="false">Why?</button></div>
+                </li>
+                <li class="band" data-role="surface" style="--c: var(--p-surface)">
+                    <div class="band__who"><p class="band__role">Surface</p><button class="band__hex" type="button"><span></span><span data-icon="copy" data-size="16"></span></button><span class="band__grade"></span><span class="band__note" hidden></span></div>
+                    <div class="proof"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio"></span><span class="proof__meta"><span class="proof__verdict"></span><span class="proof__pair"></span></span></div>
+                    <div class="ctrl"><button class="ib" type="button" data-edit title="Edit color"><span data-icon="pencil"></span></button><button class="ib" type="button" data-lock title="Lock color (L)"></button><button class="why" type="button" data-why="surface" aria-expanded="false">Why?</button></div>
+                </li>
+                <li class="band" data-role="text" style="--c: var(--p-text)">
+                    <div class="band__who"><p class="band__role">Text</p><button class="band__hex" type="button"><span></span><span data-icon="copy" data-size="16"></span></button><span class="band__grade"></span><span class="band__note" hidden></span></div>
+                    <div class="proof"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio"></span><span class="proof__meta"><span class="proof__verdict"></span><span class="proof__pair"></span></span></div>
+                    <div class="ctrl"><button class="ib" type="button" data-edit title="Edit color"><span data-icon="pencil"></span></button><button class="ib" type="button" data-lock title="Lock color (L)"></button><button class="why" type="button" data-why="text" aria-expanded="false">Why?</button></div>
+                </li>
+                <li class="band" data-role="primary" style="--c: var(--p-primary)">
+                    <div class="band__who"><p class="band__role">Primary</p><button class="band__hex" type="button"><span></span><span data-icon="copy" data-size="16"></span></button><span class="band__grade"></span><span class="band__note" hidden></span></div>
+                    <div class="proof"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio"></span><span class="proof__meta"><span class="proof__verdict"></span><span class="proof__pair"></span></span></div>
+                    <div class="ctrl"><button class="ib" type="button" data-edit title="Edit color"><span data-icon="pencil"></span></button><button class="ib" type="button" data-lock title="Lock color (L)"></button><button class="why" type="button" data-why="primary" aria-expanded="false">Why?</button></div>
+                </li>
+                <li class="band" data-role="accent" style="--c: var(--p-accent)">
+                    <div class="band__who"><p class="band__role">Accent</p><button class="band__hex" type="button"><span></span><span data-icon="copy" data-size="16"></span></button><span class="band__grade"></span><span class="band__note" hidden></span></div>
+                    <div class="proof"><span class="proof__aa" aria-hidden="true">Aa</span><span class="proof__ratio"></span><span class="proof__meta"><span class="proof__verdict"></span><span class="proof__pair"></span></span></div>
+                    <div class="ctrl"><button class="ib" type="button" data-edit title="Edit color"><span data-icon="pencil"></span></button><button class="ib" type="button" data-lock title="Lock color (L)"></button><button class="why" type="button" data-why="accent" aria-expanded="false">Why?</button></div>
+                </li>
+            </ul>
+            <div class="actions">
+                <button class="btn btn--primary" type="button" data-generate aria-keyshortcuts="Space"><span data-icon="refresh"></span>Generate</button>
+                <button class="btn" type="button" data-undo aria-disabled="true" aria-keyshortcuts="Control+Z"><span data-icon="undo"></span>Undo<span class="tip" id="tip-undo" role="tooltip">Nothing to undo yet.</span></button>
+                <span class="hint hint--space">or press <kbd class="key">Space</kbd></span>
+            </div>
+        </main>
+
+        <aside class="side">
+            <section class="ruler" aria-labelledby="h-checks">
+                <div class="side__head"><h2 id="h-checks">Contrast checks</h2><p class="ruler__sum" aria-live="polite"></p></div>
+                <p class="ruler__help">A contrast ratio says how far apart two colors are: <b>1:1</b> is the same color, <b>21:1</b> is black on white. Text needs <b>4.5:1</b>; buttons and icons need <b>3:1</b>.</p>
+                <div class="ruler__bar" aria-hidden="true">
+                    <div class="ruler__track"></div>
+                    <span class="ruler__tick" data-r="1" style="transform:none">1:1</span>
+                    <span class="ruler__tick" data-r="3"><b>3</b> UI</span>
+                    <span class="ruler__tick" data-r="4.5"><b>4.5</b> AA</span>
+                    <span class="ruler__tick" data-r="7"><b>7</b> AAA</span>
+                    <span class="ruler__tick" data-r="21" style="transform:translateX(-100%)">21:1</span>
+                </div>
+                <ul class="checks">
+                    <li data-check-row="text-bg"><button class="check" type="button" aria-expanded="false"><span>Text on Background</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                    <li data-check-row="text-surface"><button class="check" type="button" aria-expanded="false"><span>Text on Surface</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                    <li data-check-row="muted-bg"><button class="check" type="button" aria-expanded="false"><span>Muted text on Background</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                    <li data-check-row="on-primary"><button class="check" type="button" aria-expanded="false"><span>On primary on Primary</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                    <li data-check-row="primary-bg"><button class="check" type="button" aria-expanded="false"><span>Primary on Background</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                    <li data-check-row="accent-bg"><button class="check" type="button" aria-expanded="false"><span>Accent on Background</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                    <li data-check-row="status-bg"><button class="check" type="button" aria-expanded="false"><span>Status on Background</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                    <li data-check-row="status-surface"><button class="check" type="button" aria-expanded="false"><span>Status on Surface</span><span class="check__ratio"></span><span class="lv"></span></button></li>
+                </ul>
+            </section>
+
+            <section class="preview" aria-labelledby="h-prev">
+                <div class="side__head">
+                    <h2 id="h-prev">Preview</h2>
+                    <div class="seg" role="tablist" aria-label="Preview">
+                        <button role="tab" id="t-land" type="button" aria-selected="true" aria-controls="v-landing">Landing page</button>
+                        <button role="tab" id="t-mob" type="button" aria-selected="false" aria-controls="v-mobile" tabindex="-1">Mobile app</button>
+                    </div>
+                </div>
+                <div class="stage">
+                    <div id="v-landing" role="tabpanel" aria-labelledby="t-land" tabindex="0">
+                        <div class="fit" data-w="720">
+                            <div class="mk-landing">
+                                <nav class="mk-nav"><strong class="mk-logo">Plotline</strong><span class="mk-links"><span>Product</span><span>Pricing</span><span>Log in</span></span><span class="mk-btn mk-btn-sm">Start free</span></nav>
+                                <section class="mk-hero">
+                                    <span class="mk-badge">New: shared weeks</span>
+                                    <h3>Plan your week in ten minutes.</h3>
+                                    <p>Plotline turns a messy list into a week you can actually finish. Drag tasks into days, and it warns you before a day gets too full.</p>
+                                    <div class="mk-cta"><span class="mk-btn">Start free</span><span class="mk-link">See how it works</span></div>
+                                </section>
+                                <section class="mk-cards">
+                                    <div class="mk-card"><b>Sunday review</b><p>Ten guided minutes to close last week and set up the next.</p></div>
+                                    <div class="mk-card"><b>Day limits</b><p>Set how many hours a day can hold. Plotline does the math.</p></div>
+                                    <div class="mk-card"><b>Shared weeks</b><p>Plan with a partner or a team without another group chat.</p></div>
+                                </section>
+                                <section class="mk-quote"><p>“I stopped carrying Friday’s tasks into Monday.”</p><span>Sample quote from a fictional customer</span></section>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="v-mobile" role="tabpanel" aria-labelledby="t-mob" tabindex="0" hidden>
+                        <div class="fit" data-w="300">
+                            <div class="mk-phone"><div class="mk-app">
+                                <header class="mk-app-head"><span>Mon 16 – Sun 22</span><h3>This week</h3></header>
+                                <div class="mk-field"><span class="mk-plus" data-icon="plus" data-size="16"></span><span>Add a task</span></div>
+                                <ul class="mk-tasks">
+                                    <li><span class="mk-dot ok" data-icon="check" data-size="18"></span><span>Send invoice to Studio Arco</span><em class="mk-chip ok">Done</em></li>
+                                    <li><span class="mk-dot warn" data-icon="circle" data-size="18"></span><span>Draft Thursday workshop</span><em class="mk-chip warn">Due today</em></li>
+                                    <li><span class="mk-dot err" data-icon="alert" data-size="18"></span><span>Renew domain</span><em class="mk-chip err">Overdue</em></li>
+                                    <li><span class="mk-dot" data-icon="circle" data-size="18"></span><span>Call the plumber</span><em class="mk-chip">Fri</em></li>
+                                </ul>
+                                <span class="mk-fab" data-icon="plus"></span>
+                                <nav class="mk-tab"><span class="on"><span data-icon="home"></span>Week</span><span><span data-icon="calendar"></span>Month</span><span><span data-icon="user"></span>Me</span></nav>
+                            </div></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="credits"><span>Made by Alexandru Dimofte</span><a href="#">Code on GitHub</a><span>Contrast follows the WCAG 2.1 formula.</span></footer>
+        </aside>
+    </div>
+</div>
+
+<div class="dock">
+    <button class="btn" type="button" data-undo aria-disabled="true" aria-label="Undo"><span data-icon="undo"></span><span class="tip" id="tip-undo-m" role="tooltip">Nothing to undo yet.</span></button>
+    <button class="btn btn--primary" type="button" data-generate><span data-icon="refresh"></span>Generate</button>
+    <button class="btn" type="button" data-share aria-label="Share palette link"><span data-icon="link"></span></button>
+</div>
+
+<dialog class="dialog" id="shortcuts" aria-labelledby="dk">
+    <div class="dialog__head"><h2 id="dk">Keyboard shortcuts</h2><form method="dialog"><button class="btn btn--icon" aria-label="Close"><span data-icon="x"></span></button></form></div>
+    <dl class="keys">
+        <dt><kbd class="key">Space</kbd></dt><dd>Generate a new palette</dd>
+        <dt><kbd class="key">Ctrl</kbd> + <kbd class="key">Z</kbd></dt><dd>Undo</dd>
+        <dt><kbd class="key">L</kbd></dt><dd>Lock or unlock the focused color</dd>
+        <dt><kbd class="key">C</kbd></dt><dd>Copy the focused color</dd>
+        <dt><kbd class="key">?</kbd></dt><dd>Show this list</dd>
+        <dt><kbd class="key">Esc</kbd></dt><dd>Close a panel</dd>
+    </dl>
+    <label class="switch"><span>Single-key shortcuts (Space, L, C, ?)</span><input type="checkbox" id="single-keys" checked></label>
+</dialog>
+
+<div id="toasts" aria-live="polite"></div>
+<p id="live" class="sr-only" aria-live="polite"></p>
+<noscript><p style="padding:16px">Hue UI needs JavaScript to generate palettes.</p></noscript>
+<script src="../assets/icons.js"></script>
+<script src="../assets/proto.js"></script>
+</body>
+</html>
