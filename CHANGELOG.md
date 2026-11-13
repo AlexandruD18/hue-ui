@@ -1,6 +1,6 @@
 # Changelog
 
-Tutte le modifiche rilevanti di Hue UI. Formato [Keep a Changelog](https://keepachangelog.com/it/1.1.0/), versioni [SemVer](https://semver.org/lang/it/).
+Tutte le modifiche rilevanti di Hue UI. Formato [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioni [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
 
