@@ -30,6 +30,7 @@ export const en = {
         undo: "Undo",
         nothingToUndo: "Nothing to undo yet.",
         share: "Share",
+        shareLabel: "Share palette link",
         shortcuts: "Shortcuts",
     },
     band: {
@@ -63,6 +64,7 @@ export const en = {
         copied: (hex: string) => `Copied ${hex}`,
         copyFailed: "Couldn't copy. Select the code and press Ctrl+C.",
         linkCopied: "Link copied. Anyone with it sees this palette.",
+        linkFailed: "Couldn't copy the link. Copy it from the address bar.",
         invalidLink: "That link didn't contain a valid palette, so here's a fresh one.",
         fixApplied: (role: string, hex: string) => `Fix applied. ${role} is now ${hex}.`,
         dismiss: "Dismiss",
@@ -89,10 +91,8 @@ export const en = {
         aa: "Body text needs at least 4.5:1 to pass WCAG AA. This pair passes AA. It would need 7:1 for AAA.",
         ui: "Buttons and other controls need 3:1 against what surrounds them, so people can find them. This one passes.",
         adjustedTitle: (role: string) => `${role} was adjusted`,
-        adjusted: (dir: "darkened" | "lightened", from: string, to: string, reach: string) =>
-            `We ${dir} it a little, from ${from} to ${to}. ${reach} The hue is the same; only the lightness changed.`,
-        darkened: "darkened" as const,
-        lightened: "lightened" as const,
+        adjusted: (darker: boolean, from: string, to: string, reach: string) =>
+            `We ${darker ? "darkened" : "lightened"} it a little, from ${from} to ${to}. ${reach} The hue is the same; only the lightness changed.`,
         reachButtons: (who: string, ratio: string) => `${who} on your buttons now reaches ${ratio}.`,
         whiteText: "White text",
         textWord: "Text",
@@ -103,8 +103,8 @@ export const en = {
         needText: "Text needs 4.5:1.",
         needUi: "Buttons and other controls need 3:1.",
         fix: "Fix:",
-        fixLine: (dir: "darken" | "lighten", role: string, hex: string, ratio: string) =>
-            ` ${dir} ${role} to ${hex} (${ratio}).`,
+        fixLine: (darker: boolean, role: string, hex: string, ratio: string) =>
+            ` ${darker ? "darken" : "lighten"} ${role} to ${hex} (${ratio}).`,
         applyFix: "Apply fix",
     },
     hex: {
@@ -122,6 +122,19 @@ export const en = {
         code: "Code on GitHub",
         formula: "Contrast follows the WCAG 2.1 formula.",
         language: "Language",
+    },
+    languages: { en: "English", it: "Italiano" },
+    dialog: {
+        title: "Keyboard shortcuts",
+        close: "Close",
+        generate: "Generate a new palette",
+        undo: "Undo",
+        lock: "Lock or unlock the focused color",
+        copy: "Copy the focused color",
+        show: "Show this list",
+        esc: "Close a panel",
+        singleKeys: "Single-key shortcuts (Space, L, C, ?)",
+        ctrl: "Ctrl",
     },
 };
 

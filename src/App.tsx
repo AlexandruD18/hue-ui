@@ -1,22 +1,41 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { ROLES, type Role } from "./color/generate";
 import type { Hex } from "./color/hex";
 import { Band } from "./components/Band";
 import { ContrastChecks } from "./components/ContrastChecks";
 import { Icon } from "./components/Icon";
 import { Preview } from "./components/Preview";
+import { ShortcutsDialog } from "./components/ShortcutsDialog";
 import { useToasts } from "./components/Toasts";
-import { useI18n } from "./i18n";
-import { initialState, reducer } from "./state/reducer";
+import { useI18n, type Lang } from "./i18n";
+import { initialState, reducer, stateFromPalette } from "./state/reducer";
+import { readPalette, writeUrl } from "./state/url";
 import { buildView, weakest } from "./view/model";
 
 const newSeed = () => Math.floor(Math.random() * 2 ** 32);
+const LANGS: Lang[] = ["en", "it"];
+const SINGLE_KEYS = "hue-single-keys";
+
+const readSingleKeys = () => {
+    try {
+        return localStorage.getItem(SINGLE_KEYS) !== "off";
+    } catch {
+        return true;
+    }
+};
 
 export function App({ seed = newSeed() }: { seed?: number }) {
-    const [state, dispatch] = useReducer(reducer, seed, initialState);
-    const { t } = useI18n();
+    // un link condiviso (?p=) vince sulla palette casuale (US22)
+    const [boot] = useState(() => readPalette(window.location.search));
+    const [state, dispatch] = useReducer(reducer, seed, (s) =>
+        boot.status === "ok" ? stateFromPalette(boot.palette) : initialState(s),
+    );
+    const { t, lang, setLang } = useI18n();
     const toasts = useToasts();
     const [openWhy, setOpenWhy] = useState<string | null>(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [singleKeys, setSingleKeysState] = useState(readSingleKeys);
+    const warned = useRef(false);
     const view = useMemo(() => buildView(state.palette), [state.palette]);
     const canUndo = state.history.length > 0;
 
@@ -32,6 +51,36 @@ export function App({ seed = newSeed() }: { seed?: number }) {
         setOpenWhy(null);
         dispatch({ type: "applyFix", role, hex });
     }, []);
+
+    const setSingleKeys = useCallback((on: boolean) => {
+        setSingleKeysState(on);
+        try {
+            localStorage.setItem(SINGLE_KEYS, on ? "on" : "off");
+        } catch {
+            // senza storage la scelta vale fino alla chiusura della pagina
+        }
+    }, []);
+
+    // link non valido: si dice perché la palette è nuova (02 § 12)
+    useEffect(() => {
+        if (boot.status !== "invalid" || warned.current) return;
+        warned.current = true;
+        toasts.show({ message: t.toast.invalidLink, icon: "alert" });
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- solo all'avvio
+    }, []);
+
+    // l'URL segue sempre palette e lingua, così il link si copia anche dalla barra degli indirizzi
+    useEffect(() => writeUrl(state.palette, lang), [state.palette, lang]);
+
+    const share = useCallback(async () => {
+        writeUrl(state.palette, lang);
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            toasts.show({ message: t.toast.linkCopied, icon: "link" });
+        } catch {
+            toasts.show({ message: t.toast.linkFailed, icon: "alert", error: true });
+        }
+    }, [state.palette, lang, t, toasts]);
 
     // annunci e toast per ogni evento dello stato
     useEffect(() => {
@@ -69,7 +118,8 @@ export function App({ seed = newSeed() }: { seed?: number }) {
         [state.palette, t, toasts],
     );
 
-    // tastiera: Space genera (fuori da pulsanti, link, campi), Ctrl+Z annulla, Esc chiude Why?
+    // tastiera: Space genera (fuori da pulsanti, link, campi), Ctrl+Z annulla, Esc chiude Why?,
+    // L e C sulla fascia selezionata, ? apre le scorciatoie. I tasti singoli si spengono (WCAG 2.1.4).
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
             const target = e.target as HTMLElement;
@@ -85,7 +135,21 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                 undo();
                 return;
             }
-            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.ctrlKey || e.metaKey || e.altKey || !singleKeys) return;
+            if (e.key === "?") {
+                e.preventDefault();
+                setDialogOpen(true);
+                return;
+            }
+            const band = target.closest<HTMLElement>("[data-role]");
+            const key = e.key.toLowerCase();
+            if (band && (key === "l" || key === "c")) {
+                const role = band.dataset.role as Role;
+                e.preventDefault();
+                if (key === "l") dispatch({ type: "toggleLock", role });
+                else void copy(role, band.querySelector<HTMLElement>(".band__hex"));
+                return;
+            }
             if (e.code === "Space" && !target.closest("button, a, [role=tab], [role=tabpanel]")) {
                 e.preventDefault();
                 generate();
@@ -93,7 +157,7 @@ export function App({ seed = newSeed() }: { seed?: number }) {
         };
         document.addEventListener("keydown", onKey);
         return () => document.removeEventListener("keydown", onKey);
-    }, [generate, undo, openWhy]);
+    }, [generate, undo, copy, openWhy, singleKeys]);
 
     // un clic fuori dal pannello Why? lo chiude
     useEffect(() => {
@@ -126,11 +190,44 @@ export function App({ seed = newSeed() }: { seed?: number }) {
         </button>
     );
 
+    const shareButton = (compact: boolean) => (
+        <button className="btn" type="button" aria-label={t.actions.shareLabel} onClick={() => void share()}>
+            <Icon name="link" />
+            {!compact && t.actions.share}
+        </button>
+    );
+
     return (
         <div className="app" style={view.vars}>
             <header className="top">
                 <h1 className="mark">Hue UI</h1>
                 <p className="tagline">{t.tagline}</p>
+                <nav className="langs" aria-label={t.credits.language}>
+                    {LANGS.map((l) => (
+                        <button
+                            key={l}
+                            type="button"
+                            lang={l}
+                            aria-current={lang === l ? "true" : undefined}
+                            onClick={() => setLang(l)}
+                        >
+                            {t.languages[l]}
+                        </button>
+                    ))}
+                </nav>
+                <div className="top__actions">
+                    <button
+                        className="btn"
+                        type="button"
+                        aria-haspopup="dialog"
+                        aria-keyshortcuts={singleKeys ? "?" : undefined}
+                        onClick={() => setDialogOpen(true)}
+                    >
+                        <Icon name="keyboard" />
+                        {t.actions.shortcuts}
+                    </button>
+                    {shareButton(false)}
+                </div>
             </header>
 
             <div className="layout">
@@ -160,7 +257,7 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                         <button
                             className="btn btn--primary"
                             type="button"
-                            aria-keyshortcuts="Space"
+                            aria-keyshortcuts={singleKeys ? "Space" : undefined}
                             onClick={generate}
                         >
                             <Icon name="refresh" />
@@ -198,7 +295,15 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                     <Icon name="refresh" />
                     {t.actions.generate}
                 </button>
+                {shareButton(true)}
             </div>
+
+            <ShortcutsDialog
+                open={dialogOpen}
+                onClose={() => setDialogOpen(false)}
+                singleKeys={singleKeys}
+                onSingleKeys={setSingleKeys}
+            />
         </div>
     );
 }

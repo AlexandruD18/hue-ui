@@ -63,6 +63,15 @@ export function initialState(seed: number): AppState {
     return { palette, adjusted, locks: NO_LOCKS, history: [], event: null };
 }
 
+/** Stato iniziale da un link condiviso: la palette così com'è, senza blocchi. */
+export const stateFromPalette = (palette: Palette): AppState => ({
+    palette,
+    adjusted: {},
+    locks: NO_LOCKS,
+    history: [],
+    event: null,
+});
+
 const push = (s: AppState): Snapshot[] =>
     [...s.history, { palette: s.palette, adjusted: s.adjusted }].slice(-HISTORY_LIMIT);
 const emit = (s: AppState, event: AppEvent): AppState["event"] => ({ ...event, n: (s.event?.n ?? 0) + 1 });

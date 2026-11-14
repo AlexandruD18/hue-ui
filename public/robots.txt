@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alexandrud18.github.io/hue-ui/sitemap.xml

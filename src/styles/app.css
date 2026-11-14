@@ -27,7 +27,6 @@
     font-size: 0.9375rem;
 }
 .top__actions {
-    margin-left: auto;
     display: flex;
     gap: var(--s2);
 }
@@ -152,6 +151,43 @@
     align-items: center;
     min-height: 44px;
 }
+/* lingua: due parole in alto a destra, quella attiva in grassetto e sottolineata */
+.langs {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    font-size: var(--fs-13);
+    color: var(--text-2);
+}
+.langs button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 var(--s2);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.langs button + button::before {
+    content: "·";
+    margin-right: var(--s2);
+    margin-left: calc(var(--s2) * -1);
+    color: var(--text-2);
+    font-weight: 400;
+    text-decoration: none;
+    display: inline-block;
+}
+.langs button[aria-current="true"] {
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.langs button:hover {
+    color: var(--text);
+}
 
 #toasts {
     position: fixed;
@@ -211,13 +247,15 @@
         display: block;
     }
     .top {
-        padding: var(--s3) var(--s4);
+        padding: var(--s2) var(--s4) var(--s3);
         flex-wrap: wrap;
+        row-gap: 0;
         min-height: 0;
     }
     .tagline {
         flex-basis: 100%;
         font-size: 0.875rem;
+        order: 2;
     }
     .top__actions,
     .actions {
@@ -288,6 +326,12 @@
         min-height: 44px;
         padding: 0;
         font-size: var(--fs-13);
+    }
+    /* "Perché?" è più lungo di "Why?": il pulsante si allarga invece di tagliare la parola */
+    .band .ctrl .why {
+        width: auto;
+        min-width: 44px;
+        padding: 0 var(--s2);
     }
     .band .whypanel,
     .band .whypanel--up {
