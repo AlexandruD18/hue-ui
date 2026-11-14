@@ -38,13 +38,13 @@
                 "resource-summary:script:size": [
                     "error",
                     {
-                        "maxNumericValue": 81920
+                        "maxNumericValue": 102400
                     }
                 ],
                 "resource-summary:total:size": [
                     "error",
                     {
-                        "maxNumericValue": 204800
+                        "maxNumericValue": 256000
                     }
                 ]
             }

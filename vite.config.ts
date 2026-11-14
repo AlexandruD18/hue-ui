@@ -15,7 +15,8 @@ export default defineConfig({
         coverage: {
             provider: "v8",
             include: ["src/color/**", "src/state/**", "src/i18n/**"],
-            exclude: ["**/*.test.*"],
+            // i dizionari sono testi, non logica
+            exclude: ["**/*.test.*", "src/i18n/en.ts", "src/i18n/it.ts"],
             // PRD § 7: logica colore e stato coperte almeno al 90%
             thresholds: { statements: 90, branches: 85, functions: 90, lines: 90 },
         },
