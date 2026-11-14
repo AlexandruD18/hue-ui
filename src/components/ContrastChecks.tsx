@@ -46,7 +46,12 @@ function Ruler({ list, palette, derived }: Pick<Props, "list" | "palette" | "der
             return { c, px, row };
         });
     return (
-        <div className="ruler__bar" aria-hidden="true">
+        // i punti impilati oltre la seconda riga salgono sopra la barra: il margine fa loro posto
+        <div
+            className="ruler__bar"
+            aria-hidden="true"
+            style={{ marginTop: Math.max(0, Math.max(0, ...dots.map((d) => d.row)) - 2) * 14 }}
+        >
             <div className="ruler__track">
                 {ZONES.map(([k, a, b]) => (
                     <span

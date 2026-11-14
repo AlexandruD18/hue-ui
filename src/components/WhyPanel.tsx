@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { Check } from "../color/checks";
 import { contrast } from "../color/contrast";
 import type { Derived } from "../color/derive";
@@ -25,6 +26,9 @@ const isRole = (m: string): m is Role => (ROLES as readonly string[]).includes(m
 /** Pannello Why? non modale (02 § 7): cosa misura, se va bene, cosa fare. */
 export function WhyPanel({ id, check, palette, derived, locks, adjusted, up, right, onApplyFix }: Props) {
     const { t, ratio } = useI18n();
+    const ref = useRef<HTMLDivElement>(null);
+    // all'apertura il pannello si porta in vista: su mobile finiva sotto la barra fissa
+    useEffect(() => ref.current?.scrollIntoView?.({ block: "nearest" }), []);
     const cls =
         "whypanel" +
         (check.level === "Fails" ? " whypanel--fail" : "") +
@@ -43,7 +47,7 @@ export function WhyPanel({ id, check, palette, derived, locks, adjusted, up, rig
                 : t.why.reachPair(pairName(check, t), ratio(check.ratio));
         const title = t.why.adjustedTitle(t.roles[role]);
         return (
-            <div className={cls} id={id} role="region" aria-label={t.band.why + " " + title}>
+            <div className={cls} id={id} ref={ref} role="region" aria-label={t.band.why + " " + title}>
                 <p className="whypanel__title">
                     <span>{title}</span>
                 </p>
@@ -95,7 +99,7 @@ export function WhyPanel({ id, check, palette, derived, locks, adjusted, up, rig
     else body = check.level === "AAA" ? t.why.aaa : t.why.aa;
 
     return (
-        <div className={cls} id={id} role="region" aria-label={t.band.why + " " + title}>
+        <div className={cls} id={id} ref={ref} role="region" aria-label={t.band.why + " " + title}>
             <p className="whypanel__title">
                 <span>{title}</span>
                 <span className="num">{ratio(check.ratio)}</span>

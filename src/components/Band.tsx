@@ -101,7 +101,7 @@ export function Band(props: Props) {
                 <button
                     className="ib"
                     type="button"
-                    title={t.band.lockTip}
+                    title={locks[role] ? t.band.unlockTip : t.band.lockTip}
                     aria-label={t.band.lock(name)}
                     aria-pressed={locks[role]}
                     data-lock={role}

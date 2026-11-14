@@ -91,6 +91,36 @@ describe("App", () => {
         ).toBeInTheDocument();
     });
 
+    it("dopo Apply fix il focus torna al pulsante Why? e la coppia passa", async () => {
+        window.history.replaceState(null, "", "/?p=ffffff-ffffff-eeeeee-3e5bd0-c2410c");
+        const user = userEvent.setup();
+        renderApp();
+        const why = screen.getByRole("button", { name: /^Why\? Text:/ });
+        await user.click(why);
+        await user.click(screen.getByRole("button", { name: "Apply fix" }));
+        await new Promise((r) => requestAnimationFrame(r));
+        expect(screen.getByRole("button", { name: /^Why\? Text:/ })).toHaveFocus();
+        expect(screen.getByText(/^Fix applied\./)).toBeInTheDocument();
+    });
+
+    it("Spazio genera dopo un clic su un pulsante, ma lo preme se ci si arriva con Tab", async () => {
+        const user = userEvent.setup();
+        renderApp();
+        const lock = screen.getByRole("button", { name: "Lock Text" });
+        await user.click(lock);
+        const background = hexOf("Background");
+        await user.keyboard(" ");
+        expect(lock).toHaveAttribute("aria-pressed", "true");
+        expect(hexOf("Background")).not.toBe(background);
+
+        const why = screen.getByRole("button", { name: /^Why\? Text:/ });
+        lock.focus();
+        await user.tab();
+        expect(why).toHaveFocus();
+        await user.keyboard(" ");
+        expect(why).toHaveAttribute("aria-expanded", "true");
+    });
+
     it("Share copia il link", async () => {
         const user = userEvent.setup();
         renderApp();

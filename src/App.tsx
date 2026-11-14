@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { ROLES, type Role } from "./color/generate";
 import type { Hex } from "./color/hex";
 import { Band } from "./components/Band";
@@ -36,6 +36,9 @@ export function App({ seed = newSeed() }: { seed?: number }) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [singleKeys, setSingleKeysState] = useState(readSingleKeys);
     const warned = useRef(false);
+    const spaceTaken = useRef(false);
+    // true se il focus attuale è arrivato con un clic o un tocco, false se con la tastiera
+    const pointerFocus = useRef(false);
     const view = useMemo(() => buildView(state.palette), [state.palette]);
     const canUndo = state.history.length > 0;
 
@@ -47,10 +50,19 @@ export function App({ seed = newSeed() }: { seed?: number }) {
         setOpenWhy(null);
         dispatch({ type: "undo" });
     }, []);
-    const applyFix = useCallback((role: Role, hex: Hex) => {
-        setOpenWhy(null);
-        dispatch({ type: "applyFix", role, hex });
-    }, []);
+    const applyFix = useCallback(
+        (role: Role, hex: Hex) => {
+            // il pulsante della correzione sparisce col pannello: il focus torna al suo Why?
+            const key = openWhy;
+            setOpenWhy(null);
+            dispatch({ type: "applyFix", role, hex });
+            if (key)
+                requestAnimationFrame(() =>
+                    document.querySelector<HTMLElement>(`[data-why="${key}"]`)?.focus(),
+                );
+        },
+        [openWhy],
+    );
 
     const setSingleKeys = useCallback((on: boolean) => {
         setSingleKeysState(on);
@@ -93,7 +105,12 @@ export function App({ seed = newSeed() }: { seed?: number }) {
             toasts.announce((e.locked ? t.announce.locked : t.announce.unlocked)(t.roles[e.role]));
         if (e.type === "set") toasts.announce(t.announce.set(t.roles[e.role], e.hex.toUpperCase()));
         if (e.type === "fixed")
-            toasts.show({ message: t.toast.fixApplied(t.roles[e.role], e.hex.toUpperCase()), icon: "check" });
+            toasts.show({
+                message:
+                    t.toast.fixApplied(t.roles[e.role], e.hex.toUpperCase()) +
+                    (Object.keys(state.adjusted).length > 0 ? " " + t.toast.alsoAdjusted : ""),
+                icon: "check",
+            });
         // eslint-disable-next-line react-hooks/exhaustive-deps -- reagisce solo al nuovo evento
     }, [state.event]);
 
@@ -150,13 +167,36 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                 else void copy(role, band.querySelector<HTMLElement>(".band__hex"));
                 return;
             }
-            if (e.code === "Space" && !target.closest("button, a, [role=tab], [role=tabpanel]")) {
+            // dopo un clic il focus resta sul pulsante senza che l'utente lo sappia: lì Spazio genera, come dice
+            // il suggerimento. Se al pulsante si è arrivati con la tastiera, Spazio lo preme, come ci si aspetta.
+            const control = target.closest("button, a, [role=tab], [role=tabpanel]");
+            if (e.code === "Space" && (!control || (control.matches("button") && pointerFocus.current))) {
                 e.preventDefault();
+                spaceTaken.current = true;
                 generate();
             }
         };
+        // il pulsante si preme al rilascio di Spazio: se Spazio ha già generato, il rilascio non conta.
+        // Il segno sta in un ref perché generare ricrea questo effetto tra la pressione e il rilascio.
+        const onKeyUp = (e: KeyboardEvent) => {
+            if (e.code !== "Space" || !spaceTaken.current) return;
+            spaceTaken.current = false;
+            e.preventDefault();
+        };
+        const onPointer = () => (pointerFocus.current = true);
+        const onNavKey = (e: KeyboardEvent) => {
+            if (e.key === "Tab" || e.key.startsWith("Arrow")) pointerFocus.current = false;
+        };
+        document.addEventListener("pointerdown", onPointer, true);
+        document.addEventListener("keydown", onNavKey, true);
         document.addEventListener("keydown", onKey);
-        return () => document.removeEventListener("keydown", onKey);
+        document.addEventListener("keyup", onKeyUp);
+        return () => {
+            document.removeEventListener("pointerdown", onPointer, true);
+            document.removeEventListener("keydown", onNavKey, true);
+            document.removeEventListener("keydown", onKey);
+            document.removeEventListener("keyup", onKeyUp);
+        };
     }, [generate, undo, copy, openWhy, singleKeys]);
 
     // un clic fuori dal pannello Why? lo chiude
@@ -184,9 +224,12 @@ export function App({ seed = newSeed() }: { seed?: number }) {
         >
             <Icon name="undo" />
             {!compact && t.actions.undo}
-            <span className="tip" id={tipId} role="tooltip">
-                {t.actions.nothingToUndo}
-            </span>
+            {/* fuori dal nome accessibile: arriva come descrizione solo quando non c'è niente da annullare */}
+            {!canUndo && (
+                <span className="tip" id={tipId} role="tooltip" aria-hidden="true">
+                    {t.actions.nothingToUndo}
+                </span>
+            )}
         </button>
     );
 
@@ -203,16 +246,23 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                 <h1 className="mark">Hue UI</h1>
                 <p className="tagline">{t.tagline}</p>
                 <nav className="langs" aria-label={t.credits.language}>
-                    {LANGS.map((l) => (
-                        <button
-                            key={l}
-                            type="button"
-                            lang={l}
-                            aria-current={lang === l ? "true" : undefined}
-                            onClick={() => setLang(l)}
-                        >
-                            {t.languages[l]}
-                        </button>
+                    {LANGS.map((l, i) => (
+                        <Fragment key={l}>
+                            {/* il punto resta fuori dal nome del pulsante */}
+                            {i > 0 && (
+                                <span className="langs__sep" aria-hidden="true">
+                                    ·
+                                </span>
+                            )}
+                            <button
+                                type="button"
+                                lang={l}
+                                aria-current={lang === l ? "true" : undefined}
+                                onClick={() => setLang(l)}
+                            >
+                                {t.languages[l]}
+                            </button>
+                        </Fragment>
                     ))}
                 </nav>
                 <div className="top__actions">
@@ -264,9 +314,11 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                             {t.actions.generate}
                         </button>
                         {undoButton(false, "tip-undo")}
-                        <span className="hint hint--space">
-                            {t.actions.orPress} <kbd className="key">{t.actions.space}</kbd>
-                        </span>
+                        {singleKeys && (
+                            <span className="hint hint--space">
+                                {t.actions.orPress} <kbd className="key">{t.actions.space}</kbd>
+                            </span>
+                        )}
                     </div>
                 </main>
 

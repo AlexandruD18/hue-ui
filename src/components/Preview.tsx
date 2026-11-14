@@ -93,6 +93,7 @@ export function Preview() {
                         id={`panel-${v}`}
                         role="tabpanel"
                         aria-labelledby={`tab-${v}`}
+                        lang="en"
                         hidden={view !== v}
                     >
                         {view === v && (

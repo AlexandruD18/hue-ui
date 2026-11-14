@@ -1,6 +1,6 @@
 import type { Hex } from "./hex";
 import { hexToOklch, oklchToHex, type Oklch } from "./oklch";
-import { fitLightness, passes } from "./fit";
+import { fitLightness, fitLightnessWhere, passes } from "./fit";
 import { contrast } from "./contrast";
 
 export type Role = "background" | "surface" | "text" | "primary" | "accent";
@@ -22,6 +22,10 @@ const CONSTRAINTS: readonly { fg: Role; backs: readonly Role[]; min: 4.5 | 3 }[]
     { fg: "primary", backs: ["background"], min: 3 },
     { fg: "accent", backs: ["background"], min: 3 },
 ];
+
+const BACKS = ["background", "surface"] as const;
+// se il nero o il bianco si leggono, esiste un colore del testo che si legge
+const TEXT_EXTREMES: readonly Hex[] = ["#000000", "#ffffff"];
 
 // Sfondi tipici dei due modi, per capire dove un Primary o un Accent bloccato si legge
 const LIGHT_BG: Hex = "#f4f4f4";
@@ -100,7 +104,7 @@ export function generate(
 export function solve(start: Palette, locks: Locks): { palette: Palette; adjusted: Adjustments } {
     const palette = { ...start };
     const initial = { ...start };
-    for (let round = 0; round < 4; round++) {
+    for (let round = 0; round < 6; round++) {
         let changed = false;
         // Surface libera sul lato opposto dello sfondo: nessun testo potrebbe leggersi su entrambe
         const bg = hexToOklch(palette.background);
@@ -110,24 +114,53 @@ export function solve(start: Palette, locks: Locks): { palette: Palette; adjuste
             palette.surface = oklchToHex({ l, c: bg.c, h: bg.h });
             changed = true;
         }
+        // Sfondo e superficie liberi: rispettano i colori bloccati che stanno sopra di loro e lasciano
+        // posto a un testo leggibile su entrambi. Senza la seconda condizione uno sfondo spinto a 3:1
+        // da un Accento chiaro finiva su un grigio medio dove né il nero né il bianco arrivano a 4,5:1.
+        for (const back of BACKS) {
+            if (locks[back]) continue;
+            const other = back === "background" ? "surface" : "background";
+            const ok = (hex: Hex) =>
+                CONSTRAINTS.every(
+                    (c) => !locks[c.fg] || !c.backs.includes(back) || contrast(palette[c.fg], hex) >= c.min,
+                ) &&
+                (locks.text ||
+                    TEXT_EXTREMES.some((t) =>
+                        passes(
+                            t,
+                            back === "background" && !locks.surface ? [hex] : [hex, palette[other]],
+                            4.5,
+                        ),
+                    ));
+            if (ok(palette[back])) continue;
+            const current = hexToOklch(palette[back]);
+            let fixed = fitLightnessWhere(current, ok);
+            // se per passare deve cambiare lato, va dove stanno i fondi veri (scuro o quasi bianco)
+            // invece di fermarsi sul grigio medio al limite di ogni coppia
+            const dark = fixed !== null && hexToOklch(fixed).l < 0.6;
+            if (fixed && dark !== current.l < 0.6) {
+                const mode = { l: dark ? 0.22 : 0.97, c: Math.min(current.c, 0.03), h: current.h };
+                fixed = fitLightnessWhere(mode, ok) ?? fixed;
+            }
+            if (fixed && fixed !== palette[back]) {
+                palette[back] = fixed;
+                changed = true;
+            }
+        }
         for (const { fg, backs, min } of CONSTRAINTS) {
             const backColors = backs.map((b) => palette[b]);
-            if (passes(palette[fg], backColors, min)) continue;
-            if (!locks[fg]) {
-                const fixed = fitLightness(hexToOklch(palette[fg]), backColors, min);
-                if (fixed && fixed !== palette[fg]) {
-                    palette[fg] = fixed;
-                    changed = true;
-                }
-                continue;
+            if (locks[fg] || passes(palette[fg], backColors, min)) continue;
+            const current = hexToOklch(palette[fg]);
+            let fixed = fitLightness(current, backColors, min);
+            // il testo che cambia lato diventa un testo vero, non un grigio al limite di 4,5:1
+            const light = fixed !== null && hexToOklch(fixed).l >= 0.6;
+            if (fg === "text" && fixed && light !== current.l >= 0.6) {
+                const mode = { l: light ? 0.95 : 0.2, c: Math.min(current.c, 0.02), h: current.h };
+                fixed = fitLightness(mode, backColors, min) ?? fixed;
             }
-            for (const b of backs) {
-                if (locks[b] || passes(palette[fg], [palette[b]], min)) continue;
-                const fixed = fitLightness(hexToOklch(palette[b]), [palette[fg]], min);
-                if (fixed && fixed !== palette[b]) {
-                    palette[b] = fixed;
-                    changed = true;
-                }
+            if (fixed && fixed !== palette[fg]) {
+                palette[fg] = fixed;
+                changed = true;
             }
         }
         if (!changed) break;
