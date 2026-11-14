@@ -17,7 +17,7 @@ jobs:
         name: Lint, format, types, unit tests, build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
                   node-version: 22
@@ -39,7 +39,7 @@ jobs:
         needs: quality
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
                   node-version: 22
@@ -59,7 +59,7 @@ jobs:
         needs: quality
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
                   node-version: 22
@@ -72,7 +72,7 @@ jobs:
         name: Link check
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - uses: lycheeverse/lychee-action@v2
               with:
                   args: --no-progress --accept 200,403,429 --exclude "figma.com" --exclude "localhost" --exclude "github.io" README.md CHANGELOG.md
