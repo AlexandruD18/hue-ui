@@ -10,6 +10,14 @@ export default defineConfig({
         globals: true,
         setupFiles: ["./src/test/setup.ts"],
         include: ["src/**/*.test.{ts,tsx}"],
-        coverage: { provider: "v8", include: ["src/color/**", "src/state/**", "src/i18n/**"] },
+        // le prove su 10.000 palette richiedono qualche secondo
+        testTimeout: 30_000,
+        coverage: {
+            provider: "v8",
+            include: ["src/color/**", "src/state/**", "src/i18n/**"],
+            exclude: ["**/*.test.*"],
+            // PRD § 7: logica colore e stato coperte almeno al 90%
+            thresholds: { statements: 90, branches: 85, functions: 90, lines: 90 },
+        },
     },
 });
