@@ -4,7 +4,7 @@ import { hexToOklch, oklchToHex } from "./oklch";
 import { contrast, level, truncate1 } from "./contrast";
 import { fitLightness } from "./fit";
 import { mulberry32 } from "./rng";
-import { generate, ROLES, type Locks, type Palette } from "./generate";
+import { generate, solve, ROLES, type Locks, type Palette, type Role } from "./generate";
 import { derive } from "./derive";
 import { checks } from "./checks";
 import { suggestFix } from "./fix";
@@ -218,5 +218,45 @@ describe("casi limite", () => {
         const fix = suggestFix(muted, p, d);
         expect(fix.role).toBe("background");
         expect(contrast(fix.hex, d.mutedText)).toBeGreaterThanOrEqual(4.5);
+    });
+});
+
+describe("colore scritto a mano (revisione visiva 1.0, problema 1)", () => {
+    const SHARED: Palette = {
+        background: "#f7f4ee",
+        surface: "#ece6dc",
+        text: "#1c1b1a",
+        primary: "#3e5bd0",
+        accent: "#c2410c",
+    };
+    const NONE: Locks = { background: false, surface: false, text: false, primary: false, accent: false };
+    const holds = (p: Palette) =>
+        contrast(p.text, p.background) >= 4.5 &&
+        contrast(p.text, p.surface) >= 4.5 &&
+        contrast(p.primary, p.background) >= 3 &&
+        contrast(p.accent, p.background) >= 3;
+
+    it("un Accento chiaro non lascia lo sfondo su un grigio dove nessun testo si legge", () => {
+        const { palette } = solve({ ...SHARED, accent: "#f0c0a0" }, { ...NONE, accent: true });
+        expect(palette.accent).toBe("#f0c0a0");
+        expect(holds(palette)).toBe(true);
+    });
+
+    it("con un solo colore fissato, su palette qualsiasi, tutti i vincoli passano", () => {
+        const rng = mulberry32(7);
+        const hex = () =>
+            ("#" +
+                Math.floor(rng() * 0xffffff)
+                    .toString(16)
+                    .padStart(6, "0")) as Hex;
+        const fails: string[] = [];
+        for (let i = 0; i < 3000; i++) {
+            const start = Object.fromEntries(ROLES.map((r) => [r, hex()])) as Palette;
+            const role = ROLES[Math.floor(rng() * ROLES.length)] as Role;
+            const { palette } = solve(start, { ...NONE, [role]: true });
+            if (palette[role] !== start[role] || !holds(palette))
+                fails.push(`${role} ${JSON.stringify(start)}`);
+        }
+        expect(fails.slice(0, 5)).toEqual([]);
     });
 });

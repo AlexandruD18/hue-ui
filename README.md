@@ -8,14 +8,21 @@ Generatore di palette colori pensato per le interfacce. Ogni colore ha un ruolo 
 Progetto UI/UX e front-end per portfolio, volutamente semplice.
 
 - **Design:** [file Figma](https://www.figma.com/design/Vt2oN8Vcv3jzyvPY1PCWNj) · [prototipo HTML](design/schermate/home.html) · [design system](design/design-system.html)
-- **Sito:** https://alexandrud18.github.io/hue-ui/ ⟦attivo dal primo deploy⟧
+- **Sito:** https://alexandrud18.github.io/hue-ui/
 
 ## Stato
 
-- **Fatto:** pre-progetto ([docs/](docs/)), design e critica ([design/](design/README.md)), file Figma, repository con CI.
-- **Step attuale:** 8, sviluppo in sprint di una settimana. Milestone e issue su GitHub.
-- **Prossima azione:** Sprint 1, motore del colore e palette.
+- **Versione 1.0:** tutte le 27 storie del PRD sono nel sito, in tre sprint. Issue e milestone su GitHub.
+- **Revisioni:** controllo visivo e cognitive walkthrough di un valutatore separato in [docs/revisioni/](docs/revisioni/). Non ci sono stati test con persone vere.
 - **PDF dei documenti:** in `consegna/`, con la data nel nome.
+
+## Cosa si può fare
+
+- Generare una palette con il pulsante o con Spazio, bloccare i colori da tenere, tornare indietro fino a 20 passi.
+- Scrivere un codice HEX: gli altri colori si adattano perché il testo resti leggibile.
+- Leggere gli 8 controlli di contrasto in parole ("Si legge bene") e aprire "Perché?" per la spiegazione e la correzione in un clic.
+- Vedere la palette su una landing page e su un'app mobile.
+- Condividere la palette con un link; usare le scorciatoie (L, C, ?) o spegnerle.
 
 ## Requisiti
 
@@ -58,9 +65,9 @@ Le scelte e le alternative scartate sono in [docs/04 - Specifiche tecniche.md](d
 
 La CI gira su ogni pull request e blocca il merge se fallisce:
 
-- **Codice:** lint, formattazione, tipi, test unitari, build, `npm audit`;
+- **Codice:** lint, formattazione, tipi, test unitari con copertura minima del 90%, build, `npm audit`;
 - **Accessibilità:** test end-to-end con axe (WCAG 2.1 AA) su desktop e mobile;
-- **Prestazioni:** Lighthouse CI, con Accessibility 100, Performance ≥ 95, JavaScript ≤ 80 KB e pagina ≤ 200 KB;
+- **Prestazioni:** Lighthouse CI, con Accessibility 100, Performance ≥ 95, JavaScript ≤ 100 KB e pagina ≤ 250 KB (gzip);
 - **Link:** controllo dei link di README e CHANGELOG.
 
 Dependabot aggiorna le dipendenze ogni settimana.

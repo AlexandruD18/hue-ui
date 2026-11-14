@@ -19,9 +19,9 @@ test("il percorso della demo: genera, blocca, annulla, condividi", async ({ page
     await expect(primary).toHaveText("#3E5BD0");
 
     await page.getByRole("button", { name: "Lock Primary" }).click();
-    // sopra un pulsante Spazio lo preme: per generare il focus deve stare fuori dai controlli
-    await page.locator(":focus").blur();
+    // dopo un clic il focus resta sul lucchetto senza vedersi: Spazio deve generare, non sbloccare
     await page.keyboard.press("Space");
+    await expect(page.getByRole("button", { name: "Lock Primary" })).toHaveAttribute("aria-pressed", "true");
     await expect(primary).toHaveText("#3E5BD0");
     await expect(page).not.toHaveURL(new RegExp(SHARED));
 

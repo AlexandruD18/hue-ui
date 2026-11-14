@@ -170,14 +170,8 @@
     cursor: pointer;
     border-radius: 4px;
 }
-.langs button + button::before {
-    content: "·";
-    margin-right: var(--s2);
-    margin-left: calc(var(--s2) * -1);
+.langs__sep {
     color: var(--text-2);
-    font-weight: 400;
-    text-decoration: none;
-    display: inline-block;
 }
 .langs button[aria-current="true"] {
     color: var(--text);
