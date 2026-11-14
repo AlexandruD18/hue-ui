@@ -4,6 +4,10 @@ Tutte le modifiche rilevanti di Hue UI. Formato [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-14
+
+Prima versione pubblica, su https://alexandrud18.github.io/hue-ui/.
+
 ### Aggiunto
 
 - Progetto React + Vite + TypeScript con lint, formattazione, test unitari, test end-to-end con axe, Lighthouse CI e pubblicazione su GitHub Pages.
@@ -16,3 +20,7 @@ Tutte le modifiche rilevanti di Hue UI. Formato [Keep a Changelog](https://keepa
 - Dialog delle scorciatoie (Spazio, Ctrl+Z, L, C, ?, Esc) con l'interruttore per spegnere i tasti singoli.
 - Interfaccia in inglese e in italiano, con scelta ricordata nel browser.
 - Favicon, immagine per i social, `robots.txt`, `sitemap.xml`, canonical e hreflang.
+
+### Verificato
+
+- Controllo visivo e cognitive walkthrough di un valutatore separato, con le correzioni ([docs/revisioni/](docs/revisioni/)). Il bloccante trovato, contrasti rotti dopo un colore scritto a mano, è corretto e coperto da un test su 3000 palette casuali.
