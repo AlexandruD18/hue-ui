@@ -4,7 +4,7 @@
             "startServerCommand": "npm run preview -- --port 4173 --strictPort",
             "startServerReadyPattern": "Local",
             "url": ["http://localhost:4173/hue-ui/"],
-            "numberOfRuns": 1,
+            "numberOfRuns": 3,
             "settings": {
                 "preset": "desktop"
             }
@@ -20,7 +20,8 @@
                 "categories:performance": [
                     "error",
                     {
-                        "minScore": 0.95
+                        "minScore": 0.95,
+                        "aggregationMethod": "median-run"
                     }
                 ],
                 "categories:best-practices": [

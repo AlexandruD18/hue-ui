@@ -33,7 +33,7 @@ export function WhyPanel({ id, check, palette, derived, locks, adjusted, up, rig
 
     if (adjusted && check.level !== "Fails") {
         const { role, adj } = adjusted;
-        const dir = hexToOklch(adj.to).l < hexToOklch(adj.from).l ? t.why.darkened : t.why.lightened;
+        const darker = hexToOklch(adj.to).l < hexToOklch(adj.from).l;
         const reach =
             role === "primary" && check.id === "on-primary"
                 ? t.why.reachButtons(
@@ -47,7 +47,7 @@ export function WhyPanel({ id, check, palette, derived, locks, adjusted, up, rig
                 <p className="whypanel__title">
                     <span>{title}</span>
                 </p>
-                <p>{t.why.adjusted(dir, adj.from.toUpperCase(), adj.to.toUpperCase(), reach)}</p>
+                <p>{t.why.adjusted(darker, adj.from.toUpperCase(), adj.to.toUpperCase(), reach)}</p>
                 <div className="whypanel__pair">
                     <span className="whypanel__sw" style={{ background: adj.from }} />
                     <span className="num">{adj.from.toUpperCase()}</span>
@@ -85,7 +85,7 @@ export function WhyPanel({ id, check, palette, derived, locks, adjusted, up, rig
             role: f.role,
             hex: f.hex,
             text: t.why.fixLine(
-                f.direction,
+                f.direction === "darken",
                 t.roles[f.role],
                 f.hex.toUpperCase(),
                 ratio(contrast(f.hex, other)),

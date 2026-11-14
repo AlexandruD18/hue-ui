@@ -5,14 +5,19 @@ import { App } from "./App";
 import { ToastProvider } from "./components/Toasts";
 import { I18nProvider } from "./i18n";
 
-const renderApp = () =>
+const renderApp = (lang: "en" | "it" = "en") =>
     render(
-        <I18nProvider>
+        <I18nProvider initial={lang}>
             <ToastProvider>
                 <App seed={42} />
             </ToastProvider>
         </I18nProvider>,
     );
+
+beforeEach(() => {
+    window.history.replaceState(null, "", "/");
+    localStorage.clear();
+});
 
 const hexOf = (role: string) =>
     screen.getByRole("button", { name: new RegExp(`^Copy ${role} color, #`) }).textContent;
@@ -67,8 +72,72 @@ describe("App", () => {
         expect(screen.getByRole("button", { name: "Lock Accent" })).toHaveAttribute("aria-pressed", "true");
     });
 
+    it("apre un link condiviso e tiene l'URL allineato alla palette", async () => {
+        window.history.replaceState(null, "", "/?p=f7f4ee-ece6dc-1c1b1a-3e5bd0-c2410c");
+        const user = userEvent.setup();
+        renderApp();
+        expect(hexOf("Primary")).toBe("#3E5BD0");
+        expect(hexOf("Accent")).toBe("#C2410C");
+        await user.click(screen.getAllByRole("button", { name: /^Generate$/ })[0] as HTMLElement);
+        const p = new URLSearchParams(window.location.search).get("p");
+        expect(p?.split("-")[0]).toBe(hexOf("Background")?.slice(1).toLowerCase());
+    });
+
+    it("un link rotto dà una palette nuova e lo dice", () => {
+        window.history.replaceState(null, "", "/?p=nope");
+        renderApp();
+        expect(
+            screen.getByText("That link didn't contain a valid palette, so here's a fresh one."),
+        ).toBeInTheDocument();
+    });
+
+    it("Share copia il link", async () => {
+        const user = userEvent.setup();
+        renderApp();
+        await user.click(screen.getAllByRole("button", { name: "Share palette link" })[0] as HTMLElement);
+        expect(await navigator.clipboard.readText()).toContain("?p=");
+        expect(screen.getByText("Link copied. Anyone with it sees this palette.")).toBeInTheDocument();
+    });
+
+    it("L blocca la fascia selezionata, ? apre le scorciatoie, l'interruttore spegne i tasti singoli", async () => {
+        const user = userEvent.setup();
+        renderApp();
+        const lock = screen.getByRole("button", { name: "Lock Text" });
+        lock.focus();
+        await user.keyboard("l");
+        expect(lock).toHaveAttribute("aria-pressed", "true");
+        await user.keyboard("?");
+        const dialog = screen.getByRole("dialog", { hidden: true });
+        expect(
+            within(dialog).getByRole("heading", { name: "Keyboard shortcuts", hidden: true }),
+        ).toBeInTheDocument();
+        await user.click(within(dialog).getByRole("checkbox", { hidden: true }));
+        expect(localStorage.getItem("hue-single-keys")).toBe("off");
+        await user.click(within(dialog).getByRole("button", { name: "Close", hidden: true }));
+        lock.focus();
+        await user.keyboard("l");
+        expect(lock).toHaveAttribute("aria-pressed", "true");
+    });
+
+    it("passa all'italiano dal piè di pagina", async () => {
+        const user = userEvent.setup();
+        renderApp();
+        await user.click(screen.getByRole("button", { name: "Italiano" }));
+        expect(screen.getByRole("button", { name: "Italiano" })).toHaveAttribute("aria-current", "true");
+        expect(screen.getAllByRole("button", { name: /^Genera$/ }).length).toBeGreaterThan(0);
+        expect(document.documentElement.lang).toBe("it");
+        expect(new URLSearchParams(window.location.search).get("lang")).toBe("it");
+        expect(localStorage.getItem("hue-lang")).toBe("it");
+    });
+
     it("non ha violazioni axe", async () => {
         const { container } = renderApp();
+        const results = await axe(container);
+        expect(results.violations).toEqual([]);
+    });
+
+    it("non ha violazioni axe in italiano", async () => {
+        const { container } = renderApp("it");
         const results = await axe(container);
         expect(results.violations).toEqual([]);
     });
