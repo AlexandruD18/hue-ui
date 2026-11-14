@@ -9,6 +9,7 @@ Progetto UI/UX e front-end per portfolio, volutamente semplice.
 
 - **Design:** [file Figma](https://www.figma.com/design/Vt2oN8Vcv3jzyvPY1PCWNj) · [prototipo HTML](design/schermate/home.html) · [design system](design/design-system.html)
 - **Sito:** https://alexandrud18.github.io/hue-ui/
+- **Caso di studio:** [docs/05 - Caso di studio.md](docs/05%20-%20Caso%20di%20studio.md), impaginato in `consegna/`
 
 ## Stato
 
