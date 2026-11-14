@@ -16,7 +16,7 @@ Non c'è nulla da migrare: niente sito, niente dati, niente utenti. Costi di ese
 | Build | Vite | Avvio rapido, build statica pronta per Pages | Next.js: server e routing inutili per una pagina sola |
 | Stato | `useReducer` + Context | Uno stato piccolo e ben definito; il reducer è una funzione pura testabile | Redux, Zustand: dipendenze in più senza vantaggi a questa scala |
 | Colore | Libreria interna (`src/color/`) | Poche funzioni (OKLCH ↔ sRGB, contrasto, gamut); peso minimo; mostra competenza nel portfolio | culori: ottima, ma pesa più del necessario a runtime. La usiamo **solo nei test** come riferimento per i valori |
-| Stile | CSS Modules + variabili CSS | Le variabili sono già il modello dei ruoli; nessuna libreria da imparare o caricare | Tailwind: le classi d'utilità non aiutano su colori che cambiano a runtime |
+| Stile | CSS globale con classi del design + variabili CSS (rivisto il 14/11/2026) | I fogli `design/assets/hue.css` e `mockups.css`, già verificati dalla critica, sono portati in `src/styles/` così come sono: il prodotto resta identico al design approvato e c'è una sola fonte per token e componenti | CSS Modules (scelta iniziale): avrebbero richiesto di riscrivere e riverificare tutti gli stili; Tailwind: le classi d'utilità non aiutano su colori che cambiano a runtime |
 | Font | 2 file WOFF2 in locale, `font-display: swap` | Privacy (nessuna chiamata a Google) e budget | Font di sistema: meno carattere |
 | Icone | SVG inline, una sola famiglia (decisa nel design) | Nessuna richiesta in più, colorabili con `currentColor` | Font di icone: problemi di accessibilità |
 | Test | Vitest, Testing Library, vitest-axe; Playwright con @axe-core/playwright per un flusso completo | Copertura dalla logica al browser vero | Jest: più lento con Vite |
@@ -184,6 +184,8 @@ Non applicabile: nessun account, nessun dato sul server, nessun sito precedente 
 - L'interfaccia di Hue UI ha colori propri fissi: la palette generata colora **solo** campioni e mockup, mai i controlli. Così l'accessibilità dell'app non dipende dal caso.
 
 ## 9. Prestazioni
+
+- **Budget rivisto il 14/11/2026.** React 19 da solo pesa circa 58 KB compressi: con l'interfaccia completa il JavaScript arriva a circa 80 KB. Tenere React (scelto nel charter) vale più di qualche KB: il budget passa a **JavaScript ≤ 100 KB** e **pagina ≤ 250 KB** (carattere variabile locale compreso). Alternativa scartata: Preact con `preact/compat` (circa 55 KB in meno), che però cambia lo stack scelto.
 
 - Budget dell'analisi § 5, controllato da Lighthouse CI (`budget.json`) a ogni PR.
 - Il cambio di palette aggiorna solo variabili CSS sull'elemento del mockup: nessun nuovo render dei componenti del mockup.

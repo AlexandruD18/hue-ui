@@ -89,11 +89,27 @@ export function generate(
 
     const palette = {} as Palette;
     for (const r of ROLES) palette[r] = locks[r] ? prev[r] : oklchToHex(draft[r]);
-    const initial = { ...palette };
+    return solve(palette, locks);
+}
 
-    // 7. vincoli: si adatta il colore libero della coppia, solo nella luminosità
+/**
+ * Passo 7: si adatta il colore libero di ogni coppia che non passa, solo nella luminosità.
+ * Serve anche quando l'utente scrive un colore o applica una correzione. Le coppie tra due
+ * colori bloccati restano come sono: lì decide l'utente.
+ */
+export function solve(start: Palette, locks: Locks): { palette: Palette; adjusted: Adjustments } {
+    const palette = { ...start };
+    const initial = { ...start };
     for (let round = 0; round < 4; round++) {
         let changed = false;
+        // Surface libera sul lato opposto dello sfondo: nessun testo potrebbe leggersi su entrambe
+        const bg = hexToOklch(palette.background);
+        const surf = hexToOklch(palette.surface);
+        if (!locks.surface && bg.l < 0.6 !== surf.l < 0.6) {
+            const l = bg.l < 0.6 ? Math.min(1, bg.l + 0.04) : Math.max(0, bg.l - 0.04);
+            palette.surface = oklchToHex({ l, c: bg.c, h: bg.h });
+            changed = true;
+        }
         for (const { fg, backs, min } of CONSTRAINTS) {
             const backColors = backs.map((b) => palette[b]);
             if (passes(palette[fg], backColors, min)) continue;

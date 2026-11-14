@@ -1,0 +1,360 @@
+/* Layout della pagina, portato da design/schermate/home.html */
+/* ===== Desktop: tutto in una schermata (da 760 px di altezza in su) ===== */
+.app {
+    height: 100vh;
+    min-height: 760px;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+.top {
+    display: flex;
+    align-items: center;
+    gap: var(--s4);
+    min-height: 64px;
+    padding: var(--s2) var(--s6);
+    border-bottom: 1px solid var(--divider);
+}
+.mark {
+    margin: 0;
+    font-size: var(--fs-25);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+.tagline {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.9375rem;
+}
+.top__actions {
+    margin-left: auto;
+    display: flex;
+    gap: var(--s2);
+}
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+    min-height: 0;
+}
+
+.palette {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 0;
+}
+.bands {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+    min-height: 0;
+}
+.band + .band {
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+.band .whypanel {
+    position: absolute;
+    right: var(--s6);
+    top: calc(50% + 32px);
+    z-index: 20;
+}
+.band .whypanel--up {
+    top: auto;
+    bottom: calc(50% + 32px);
+}
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    padding: var(--s3) var(--s6);
+    border-top: 1px solid var(--divider);
+}
+
+.side {
+    border-left: 1px solid var(--divider);
+    padding: var(--s4) var(--s6) var(--s3);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--s4);
+    min-height: 0;
+}
+.side h2 {
+    margin: 0;
+    font-size: var(--fs-20);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+.side__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s3);
+    flex-wrap: wrap;
+}
+.checks li .whypanel {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 4px);
+    z-index: 20;
+}
+.checks li .whypanel--right {
+    left: auto;
+    right: 0;
+}
+.preview {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: var(--s2);
+    min-height: 0;
+}
+.stage {
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    border-radius: var(--r-ctrl);
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px var(--divider);
+    overflow: hidden;
+}
+.stage [role="tabpanel"] {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: var(--s3);
+}
+.fit {
+    position: relative;
+}
+.fit > * {
+    transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.fit .mk-landing {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--divider);
+}
+.credits {
+    display: flex;
+    gap: var(--s4);
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: var(--fs-13);
+    color: var(--text-2);
+}
+.credits a {
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
+
+#toasts {
+    position: fixed;
+    left: 50%;
+    bottom: var(--s5);
+    transform: translateX(-50%);
+    z-index: 50;
+}
+.dock {
+    display: none;
+}
+
+/* ===== Altezze piccole: torna lo scroll, l'anteprima non scende sotto una misura leggibile ===== */
+@media (max-height: 759px) and (min-width: 761px) {
+    .app {
+        height: auto;
+    }
+    .bands {
+        grid-template-rows: repeat(5, 128px);
+    }
+    .stage {
+        height: 380px;
+    }
+}
+@media (max-width: 1180px) and (min-width: 761px) {
+    .tagline {
+        display: none;
+    }
+    .band {
+        grid-template-columns: 1fr auto;
+        padding: var(--s3) var(--s5);
+    }
+    .band .proof {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    .band .ctrl {
+        grid-row: 1 / span 2;
+        grid-column: 2;
+    }
+    .app {
+        height: auto;
+    }
+    .bands {
+        grid-template-rows: none;
+    }
+}
+
+/* ===== Mobile: righe compatte, tutti e 5 i colori nella prima schermata ===== */
+@media (max-width: 760px) {
+    html {
+        scroll-padding-bottom: 96px;
+    }
+    .app {
+        height: auto;
+        min-height: 0;
+        display: block;
+    }
+    .top {
+        padding: var(--s3) var(--s4);
+        flex-wrap: wrap;
+        min-height: 0;
+    }
+    .tagline {
+        flex-basis: 100%;
+        font-size: 0.875rem;
+    }
+    .top__actions,
+    .actions {
+        display: none;
+    }
+    .layout {
+        display: block;
+    }
+    .bands {
+        display: block;
+    }
+    .band {
+        grid-template-columns: 1fr auto;
+        padding: var(--s2) var(--s4);
+        gap: var(--s2);
+        min-height: 92px;
+    }
+    .band__role {
+        font-size: 1.0625rem;
+    }
+    .band__hex {
+        min-height: 36px;
+    }
+    .band__grade {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 1px var(--s2) 2px;
+        border-radius: var(--r-focus);
+        background: var(--page);
+        color: var(--text);
+        font-size: var(--fs-13);
+    }
+    .band__grade .i {
+        width: 13px;
+        height: 13px;
+    }
+    .band__grade[data-level="Fails"] {
+        color: var(--danger);
+    }
+    .band__who {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .band .ctrl {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: start;
+        margin-top: var(--s1);
+    }
+    .band .proof {
+        display: none;
+    }
+    .band.is-open .proof {
+        display: grid;
+        grid-column: 1 / -1;
+    }
+    .band .proof__aa {
+        font-size: 2.75rem;
+    }
+    .band .proof__ratio {
+        font-size: 1.5rem;
+    }
+    .band .ctrl .ib,
+    .band .ctrl .why {
+        width: 44px;
+        height: 44px;
+        min-height: 44px;
+        padding: 0;
+        font-size: var(--fs-13);
+    }
+    .band .whypanel,
+    .band .whypanel--up {
+        position: static;
+        grid-column: 1 / -1;
+        width: auto;
+    }
+    .band .hexedit {
+        grid-column: 1;
+    }
+    .side {
+        border-left: 0;
+        padding: var(--s5) var(--s4) 112px;
+        display: grid;
+        gap: var(--s6);
+    }
+    .checks {
+        grid-template-columns: 1fr;
+    }
+    .checks li .whypanel,
+    .checks li .whypanel--right {
+        position: static;
+        width: auto;
+        margin: 0 0 var(--s3);
+    }
+    .stage {
+        min-height: 0;
+    }
+    .stage [role="tabpanel"] {
+        height: auto;
+    }
+    .dock {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 30;
+        gap: var(--s2);
+        padding: var(--s3) var(--s4) calc(var(--s3) + env(safe-area-inset-bottom));
+        background: var(--page);
+        border-top: 1px solid var(--divider);
+    }
+    .dock .btn--primary {
+        flex: 1;
+        min-height: 56px;
+        padding: 0 var(--s4);
+    }
+    .dock .btn:not(.btn--primary) {
+        width: 56px;
+        min-height: 56px;
+        padding: 0;
+    }
+    .dock .tip {
+        left: 0;
+        transform: none;
+    }
+    #toasts {
+        bottom: 96px;
+        width: calc(100vw - 32px);
+        display: grid;
+        justify-items: center;
+    }
+}
+@media (hover: none) {
+    [data-shortcuts],
+    .hint--space {
+        display: none !important;
+    }
+}
