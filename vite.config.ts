@@ -1,10 +1,47 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import type { Plugin } from "vite";
+
+const BASE = "/hue-ui/";
+
+/**
+ * Precarica il file del carattere principale (latino, assi ottici). Senza, la pagina si disegna con il
+ * carattere di riserva e, quando arriva Bricolage Grotesque, i testi del pannello si spostano di circa
+ * 20 px: CLS 0,06 su Lighthouse. Il nome del file ha l'hash, quindi lo si cerca nel bundle finale.
+ */
+function preloadFont(): Plugin {
+    return {
+        name: "hue-preload-font",
+        apply: "build",
+        transformIndexHtml: {
+            order: "post",
+            handler(_html, ctx) {
+                const file = Object.keys(ctx.bundle ?? {}).find((f) =>
+                    /bricolage-grotesque-latin-opsz-normal-.*\.woff2$/.test(f),
+                );
+                if (!file) return [];
+                return [
+                    {
+                        tag: "link",
+                        attrs: {
+                            rel: "preload",
+                            href: BASE + file,
+                            as: "font",
+                            type: "font/woff2",
+                            crossorigin: "",
+                        },
+                        injectTo: "head",
+                    },
+                ];
+            },
+        },
+    };
+}
 
 // base: GitHub Pages pubblica il sito in /hue-ui/
 export default defineConfig({
-    base: "/hue-ui/",
-    plugins: [react()],
+    base: BASE,
+    plugins: [react(), preloadFont()],
     test: {
         environment: "jsdom",
         globals: true,
