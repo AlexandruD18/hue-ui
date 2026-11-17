@@ -8,7 +8,7 @@
 
 **[Try it live →](https://alexandrud18.github.io/hue-ui/)**
 
-![Hue UI on desktop: five color bands with a contrast proof on each, the contrast checks and a live landing page preview](docs/img/caso-di-studio/desktop-1440.png)
+![Hue UI on desktop: five color bands with a contrast proof on each, the contrast checks and a live landing page preview](docs/img/readme-desktop.png)
 
 Most palette generators give you five colors in a row and leave the hard part to you. Which one is the background? Which one is the button? Will the text actually be readable? Hue UI answers those questions inside the generator. Every color gets a role, every text pair passes WCAG 2.1 contrast, and you see the palette on a real landing page and a mobile app straight away.
 
