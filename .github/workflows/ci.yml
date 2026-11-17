@@ -28,7 +28,14 @@ jobs:
             - run: npm run typecheck
             - run: npm run test:coverage
             - run: npm run build
-            - run: npm audit --audit-level=high
+            # il codice che arriva agli utenti: nessuna vulnerabilità alta ammessa
+            - name: Audit delle dipendenze del sito
+              run: npm audit --omit=dev --audit-level=high
+            # strumenti di sviluppo (Vite, Vitest, ESLint): segnala senza bloccare, perché a volte
+            # la correzione non esiste ancora; ogni avviso aperto ha un'issue che lo segue
+            - name: Audit degli strumenti di sviluppo
+              run: npm audit --audit-level=high
+              continue-on-error: true
             - uses: actions/upload-artifact@v7
               with:
                   name: dist
