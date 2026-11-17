@@ -10,3 +10,6 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Documenti impaginati: restano in locale, il caso di studio è allegato alla release
+consegna/
