@@ -82,7 +82,9 @@ export function App({ seed = newSeed() }: { seed?: number }) {
     }, []);
 
     // l'URL segue sempre palette e lingua, così il link si copia anche dalla barra degli indirizzi
-    useEffect(() => writeUrl(state.palette, lang), [state.palette, lang]);
+    useEffect(() => {
+        writeUrl(state.palette, lang);
+    }, [state.palette, lang]);
 
     const share = useCallback(async () => {
         writeUrl(state.palette, lang);

@@ -28,7 +28,10 @@ export function WhyPanel({ id, check, palette, derived, locks, adjusted, up, rig
     const { t, ratio } = useI18n();
     const ref = useRef<HTMLDivElement>(null);
     // all'apertura il pannello si porta in vista: su mobile finiva sotto la barra fissa
-    useEffect(() => ref.current?.scrollIntoView?.({ block: "nearest" }), []);
+    // tra graffe: in Chrome scrollIntoView restituisce una Promise, e React la scambierebbe per la pulizia
+    useEffect(() => {
+        ref.current?.scrollIntoView?.({ block: "nearest" });
+    }, []);
     const cls =
         "whypanel" +
         (check.level === "Fails" ? " whypanel--fail" : "") +

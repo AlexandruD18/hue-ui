@@ -48,3 +48,16 @@ test("in italiano è tradotta e accessibile", async ({ page }) => {
     await expect(page.getByRole("button", { name: /^Genera$/ }).first()).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
 });
+
+test("Why? si apre e si richiude senza errori", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`./?p=${SHARED}&lang=en`);
+    const why = page.getByRole("button", { name: /^Why\? Text:/ });
+    await why.click();
+    await expect(why).toHaveAttribute("aria-expanded", "true");
+    await why.click();
+    await expect(why).toHaveAttribute("aria-expanded", "false");
+    await expect(page.getByRole("heading", { level: 1, name: "Hue UI" })).toBeVisible();
+    expect(errors).toEqual([]);
+});

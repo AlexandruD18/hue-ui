@@ -4,6 +4,12 @@ Tutte le modifiche rilevanti di Hue UI. Formato [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-11-17
+
+### Corretto
+
+- Riaprire e richiudere "Perché?" mandava la pagina in bianco nelle versioni recenti di Chrome. Lì `scrollIntoView` restituisce una Promise, e l'effetto che porta in vista il pannello la restituiva a React come funzione di pulizia. Gli effetti ora non restituiscono niente. Ci sono due test nuovi: uno di componente, che simula il comportamento di Chrome, e uno end-to-end in Chromium.
+
 ## [1.0.1] - 2026-11-17
 
 Rifiniture dalle revisioni della 1.0 (#41).
