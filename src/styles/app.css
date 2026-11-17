@@ -112,9 +112,6 @@
     min-height: 0;
     display: grid;
     place-items: center;
-    border-radius: var(--r-ctrl);
-    background: var(--surface-2);
-    box-shadow: inset 0 0 0 1px var(--divider);
     overflow: hidden;
 }
 .stage [role="tabpanel"] {
@@ -122,7 +119,8 @@
     place-items: center;
     width: 100%;
     height: 100%;
-    padding: var(--s3);
+    /* niente riquadro grigio: la finestra del mockup è il riquadro; 2 px lasciano vedere il suo bordo */
+    padding: 2px;
 }
 /* accanto alle schede: dentro il riquadro copriva il menu del mockup */
 .stage__zoom {
@@ -148,6 +146,7 @@
 }
 .fit {
     position: relative;
+    overflow: hidden;
 }
 .fit > * {
     transform-origin: top left;
@@ -155,9 +154,9 @@
     top: 0;
     left: 0;
 }
-.fit .mk-landing {
-    border-radius: 8px;
-    overflow: hidden;
+/* il bordo sta sul contenitore: se il fondo viene tagliato, la finestra resta chiusa e arrotondata */
+.fit:has(.mk-landing) {
+    border-radius: 10px;
     box-shadow: 0 0 0 1px var(--divider);
 }
 .credits {

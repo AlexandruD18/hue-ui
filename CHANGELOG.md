@@ -4,6 +4,13 @@ Tutte le modifiche rilevanti di Hue UI. Formato [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-17
+
+### Cambiato
+
+- Nuova anteprima "Landing page". È una finestra del browser che riempie tutto il riquadro, senza la cornice grigia e i bordi vuoti di prima. Il titolo sta a sinistra. A destra c'è la settimana dell'app: un giorno per riga, i compiti come etichette con il pallino del loro colore e le ore usate su una barra, che diventa rossa quando un giorno è troppo pieno. Primario, accento e stati si vedono al lavoro insieme.
+- Nel mockup i testi usano solo i colori controllati (testo, testo secondario, testo sui pulsanti). Accento e stati colorano solo forme, bordi e sottolineature.
+
 ## [1.0.2] - 2026-11-17
 
 ### Corretto

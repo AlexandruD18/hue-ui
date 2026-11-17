@@ -4,35 +4,43 @@ import { LandingMockup, MobileAppMockup } from "../previews/Mockups";
 import { Icon } from "./Icon";
 
 type View = "landing" | "mobile";
-const NATURAL_WIDTH: Record<View, number> = { landing: 720, mobile: 300 };
+const NATURAL_WIDTH: Record<View, number> = { landing: 880, mobile: 300 };
 
-/** Rimpicciolisce il mockup per farlo stare nello spazio libero (desktop senza scroll, 02 § 1). */
-function Fit({ width, children }: { width: number; children: ReactNode }) {
+/**
+ * Rimpicciolisce il mockup per farlo stare nello spazio libero (desktop senza scroll, 02 § 1).
+ * Con `crop` segue solo la larghezza e taglia il fondo: la finestra della landing riempie il riquadro
+ * da bordo a bordo, e sotto c'è solo il resto della settimana.
+ */
+function Fit({ width, crop = false, children }: { width: number; crop?: boolean; children: ReactNode }) {
     const outer = useRef<HTMLDivElement>(null);
     const inner = useRef<HTMLDivElement>(null);
-    const [box, setBox] = useState({ scale: 1, h: 0 });
+    const [box, setBox] = useState({ scale: 1, h: 0, max: Infinity });
     useLayoutEffect(() => {
         const stage = outer.current?.closest(".stage");
         if (!stage || !inner.current) return;
         const measure = () => {
             if (!inner.current) return;
-            const pad = 24;
+            const pad = 4;
             const natH = inner.current.offsetHeight;
             const mobile = window.matchMedia("(max-width: 760px)").matches;
             const scale = Math.min(
                 1,
                 (stage.clientWidth - pad) / width,
-                mobile ? Infinity : (stage.clientHeight - pad) / natH,
+                mobile || crop ? Infinity : (stage.clientHeight - pad) / natH,
             );
-            setBox({ scale, h: natH });
+            setBox({ scale, h: natH, max: mobile ? Infinity : stage.clientHeight - pad });
         };
         measure();
         const ro = new ResizeObserver(measure);
         ro.observe(stage);
         return () => ro.disconnect();
-    }, [width]);
+    }, [width, crop]);
     return (
-        <div ref={outer} className="fit" style={{ width: width * box.scale, height: box.h * box.scale }}>
+        <div
+            ref={outer}
+            className="fit"
+            style={{ width: width * box.scale, height: Math.min(box.h * box.scale, box.max) }}
+        >
             <div ref={inner} style={{ width, transform: `scale(${box.scale})` }} aria-hidden="true">
                 {children}
             </div>
@@ -144,7 +152,7 @@ export function Preview() {
                         hidden={view !== v}
                     >
                         {view === v && (
-                            <Fit width={NATURAL_WIDTH[v]}>
+                            <Fit width={NATURAL_WIDTH[v]} crop={v === "landing"}>
                                 {v === "landing" ? <LandingMockup /> : <MobileAppMockup />}
                             </Fit>
                         )}
