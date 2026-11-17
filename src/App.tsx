@@ -212,18 +212,17 @@ export function App({ seed = newSeed() }: { seed?: number }) {
 
     const toggleWhy = (key: string) => setOpenWhy((cur) => (cur === key ? null : key));
 
-    const undoButton = (compact: boolean, tipId: string) => (
+    const undoButton = (tipId: string) => (
         <button
             className="btn"
             type="button"
             aria-disabled={!canUndo}
             aria-describedby={canUndo ? undefined : tipId}
             aria-keyshortcuts="Control+Z"
-            aria-label={compact ? t.actions.undo : undefined}
             onClick={() => canUndo && undo()}
         >
             <Icon name="undo" />
-            {!compact && t.actions.undo}
+            {t.actions.undo}
             {/* fuori dal nome accessibile: arriva come descrizione solo quando non c'è niente da annullare */}
             {!canUndo && (
                 <span className="tip" id={tipId} role="tooltip" aria-hidden="true">
@@ -233,10 +232,10 @@ export function App({ seed = newSeed() }: { seed?: number }) {
         </button>
     );
 
-    const shareButton = (compact: boolean) => (
+    const shareButton = () => (
         <button className="btn" type="button" aria-label={t.actions.shareLabel} onClick={() => void share()}>
             <Icon name="link" />
-            {!compact && t.actions.share}
+            {t.actions.share}
         </button>
     );
 
@@ -276,7 +275,7 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                         <Icon name="keyboard" />
                         {t.actions.shortcuts}
                     </button>
-                    {shareButton(false)}
+                    {shareButton()}
                 </div>
             </header>
 
@@ -313,7 +312,7 @@ export function App({ seed = newSeed() }: { seed?: number }) {
                             <Icon name="refresh" />
                             {t.actions.generate}
                         </button>
-                        {undoButton(false, "tip-undo")}
+                        {undoButton("tip-undo")}
                         {singleKeys && (
                             <span className="hint hint--space">
                                 {t.actions.orPress} <kbd className="key">{t.actions.space}</kbd>
@@ -342,12 +341,12 @@ export function App({ seed = newSeed() }: { seed?: number }) {
             </div>
 
             <div className="dock">
-                {undoButton(true, "tip-undo-m")}
+                {undoButton("tip-undo-m")}
                 <button className="btn btn--primary" type="button" onClick={generate}>
                     <Icon name="refresh" />
                     {t.actions.generate}
                 </button>
-                {shareButton(true)}
+                {shareButton()}
             </div>
 
             <ShortcutsDialog

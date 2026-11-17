@@ -72,6 +72,7 @@ const PATHS = {
         </>
     ),
     pencil: <path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z" />,
+    expand: <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />,
 };
 
 export type IconName = keyof typeof PATHS;

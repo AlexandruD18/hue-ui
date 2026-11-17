@@ -108,6 +108,7 @@
     min-height: 0;
 }
 .stage {
+    position: relative;
     min-height: 0;
     display: grid;
     place-items: center;
@@ -122,6 +123,28 @@
     width: 100%;
     height: 100%;
     padding: var(--s3);
+}
+/* accanto alle schede: dentro il riquadro copriva il menu del mockup */
+.stage__zoom {
+    font-size: var(--fs-13);
+}
+.preview .side__head .seg {
+    margin-left: auto;
+}
+/* il mockup a grandezza naturale: largo quanto serve, alto al massimo quanto la finestra */
+.zoom {
+    width: fit-content;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+}
+.zoom__body {
+    margin: 0 auto;
+}
+.zoom__body .mk-landing {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--divider);
 }
 .fit {
     position: relative;
@@ -183,12 +206,17 @@
     color: var(--text);
 }
 
+/* centrati sulla colonna delle fasce (11 parti su 20): non coprono i crediti; errore e informazione impilati */
 #toasts {
     position: fixed;
-    left: 50%;
+    left: 27.5%;
     bottom: var(--s5);
     transform: translateX(-50%);
     z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s2);
 }
 .dock {
     display: none;
@@ -290,6 +318,17 @@
     .band__grade[data-level="Fails"] {
         color: var(--danger);
     }
+    .band__grade {
+        flex-wrap: wrap;
+        max-width: 100%;
+    }
+    .band__gradepair {
+        color: var(--text-2);
+        font-size: 0.75rem;
+    }
+    .band__who {
+        grid-template-rows: none;
+    }
     .band__who {
         grid-column: 1;
         grid-row: 1;
@@ -354,6 +393,13 @@
     .stage {
         min-height: 0;
     }
+    .stage__zoom {
+        display: none;
+    }
+    /* le righe dei crediti vanno a capo: i 44 px dei link bastano a distanziarle */
+    .credits {
+        row-gap: 0;
+    }
     .stage [role="tabpanel"] {
         height: auto;
     }
@@ -374,16 +420,23 @@
         min-height: 56px;
         padding: 0 var(--s4);
     }
+    /* icona con la parola sotto: un link come icona di "condividi" non è ovvio (revisione 1.0, #18) */
     .dock .btn:not(.btn--primary) {
-        width: 56px;
+        width: 72px;
         min-height: 56px;
         padding: 0;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        line-height: 1.1;
     }
     .dock .tip {
         left: 0;
         transform: none;
     }
     #toasts {
+        left: 50%;
         bottom: 96px;
         width: calc(100vw - 32px);
         display: grid;

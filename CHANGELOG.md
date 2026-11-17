@@ -4,6 +4,30 @@ Tutte le modifiche rilevanti di Hue UI. Formato [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-17
+
+Rifiniture dalle revisioni della 1.0 (#41).
+
+### Aggiunto
+
+- Pulsante "Ingrandisci" sull'anteprima: il mockup a grandezza naturale in un dialog. Su desktop il telefono aveva testi di 5-6 px.
+- Su mobile il chip di ogni fascia dice con quale colore è misurato ("con Testo secondario").
+- La spiegazione sopra il righello dice cosa vogliono dire AA, AAA e UI.
+- Etichette visibili sotto Annulla e Condividi nella barra mobile.
+
+### Corretto
+
+- Un toast informativo non cancella più un errore ancora aperto: hanno due posti separati.
+- I toast su desktop stanno sopra la colonna delle fasce e non coprono i crediti.
+- Con o senza la nota "Bloccato", nome e codice stanno alla stessa altezza in tutte le fasce.
+- L'anello di focus del codice non copre più il nome del ruolo.
+- Mentre si scrive un codice HEX la tessera "Aa", ancora sulla palette di prima, si attenua.
+- Meno spazio tra le righe dei crediti su mobile.
+
+### Dipendenze
+
+- jsdom 31 per i test di componente (#36).
+
 ## [1.0.0] - 2026-11-14
 
 Prima versione pubblica, su https://alexandrud18.github.io/hue-ui/.

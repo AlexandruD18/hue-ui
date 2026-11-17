@@ -4,7 +4,7 @@ import type { Derived } from "../color/derive";
 import type { Adjustment, Locks, Palette, Role } from "../color/generate";
 import { parseHex, type Hex } from "../color/hex";
 import { useI18n } from "../i18n";
-import { colorOf, labelOn, pairName, verdict } from "../view/model";
+import { colorOf, labelOn, memberName, pairName, verdict } from "../view/model";
 import { Icon } from "./Icon";
 import { ProofTile } from "./ProofTile";
 import { WhyPanel } from "./WhyPanel";
@@ -42,7 +42,7 @@ export function Band(props: Props) {
 
     return (
         <li
-            className={"band" + (whyOpen ? " is-open" : "")}
+            className={"band" + (whyOpen ? " is-open" : "") + (editing ? " is-editing" : "")}
             data-role={role}
             style={{ ["--c" as string]: bandColor, ["--on" as string]: labelOn(bandColor) }}
         >
@@ -73,6 +73,10 @@ export function Band(props: Props) {
                     <span className="band__grade" data-level={check.level}>
                         <Icon name={check.level === "Fails" ? "x" : "check"} size={14} />
                         <b>{ratio(check.ratio)}</b> {v.word}
+                        {/* su mobile la tessera non c'è: il chip dice da solo quale coppia misura */}
+                        <span className="band__gradepair">
+                            {t.against(memberName(check.fg === role ? check.bg : check.fg, t))}
+                        </span>
                     </span>
                     {(locks[role] || adjustment) && (
                         <span className="band__note">

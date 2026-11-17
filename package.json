@@ -1,7 +1,7 @@
 {
     "name": "hue-ui",
     "private": true,
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "module",
     "description": "Random color palettes for interfaces. Every color has a job, every pair is readable.",
     "author": "Alexandru Mihai Dimofte",
