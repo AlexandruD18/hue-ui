@@ -1,6 +1,7 @@
-import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { useI18n } from "../i18n";
 import { LandingMockup, MobileAppMockup } from "../previews/Mockups";
+import { Icon } from "./Icon";
 
 type View = "landing" | "mobile";
 const NATURAL_WIDTH: Record<View, number> = { landing: 720, mobile: 300 };
@@ -39,10 +40,46 @@ function Fit({ width, children }: { width: number; children: ReactNode }) {
     );
 }
 
+/**
+ * Il mockup a grandezza naturale in un dialog nativo. Su desktop il telefono, rimpicciolito per stare
+ * nella pagina senza scroll, aveva testi di 5-6 px (revisione visiva 1.0, #12).
+ */
+function Zoom({ view, onClose }: { view: View | null; onClose: () => void }) {
+    const { t } = useI18n();
+    const ref = useRef<HTMLDialogElement>(null);
+    useEffect(() => {
+        const d = ref.current;
+        if (!d) return;
+        if (view && !d.open) d.showModal?.();
+        if (!view && d.open) d.close();
+    }, [view]);
+    return (
+        <dialog ref={ref} className="dialog zoom" aria-labelledby="zoom-title" onClose={onClose}>
+            <div className="dialog__head">
+                <h2 id="zoom-title">{view ? `${t.preview.title}: ${t.preview[view]}` : t.preview.title}</h2>
+                <button className="btn btn--icon" type="button" aria-label={t.dialog.close} onClick={onClose}>
+                    <Icon name="x" />
+                </button>
+            </div>
+            {view && (
+                <div
+                    className="zoom__body"
+                    lang="en"
+                    aria-hidden="true"
+                    style={{ width: NATURAL_WIDTH[view] }}
+                >
+                    {view === "landing" ? <LandingMockup /> : <MobileAppMockup />}
+                </div>
+            )}
+        </dialog>
+    );
+}
+
 /** Anteprima con selettore a schede (frecce, Home, End). */
 export function Preview() {
     const { t } = useI18n();
     const [view, setView] = useState<View>("landing");
+    const [zoom, setZoom] = useState<View | null>(null);
     const tabs: View[] = ["landing", "mobile"];
     const refs = useRef<Record<View, HTMLButtonElement | null>>({ landing: null, mobile: null });
 
@@ -85,6 +122,16 @@ export function Preview() {
                         </button>
                     ))}
                 </div>
+                <button
+                    className="btn stage__zoom"
+                    type="button"
+                    aria-haspopup="dialog"
+                    aria-label={t.preview.enlargeLabel(t.preview[view])}
+                    onClick={() => setZoom(view)}
+                >
+                    <Icon name="expand" size={16} />
+                    {t.preview.enlarge}
+                </button>
             </div>
             <div className="stage">
                 {tabs.map((v) => (
@@ -104,6 +151,7 @@ export function Preview() {
                     </div>
                 ))}
             </div>
+            <Zoom view={zoom} onClose={() => setZoom(null)} />
         </section>
     );
 }

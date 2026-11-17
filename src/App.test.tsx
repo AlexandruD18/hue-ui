@@ -121,6 +121,16 @@ describe("App", () => {
         expect(why).toHaveAttribute("aria-expanded", "true");
     });
 
+    it("Enlarge apre l'anteprima a grandezza naturale", async () => {
+        const user = userEvent.setup();
+        renderApp();
+        await user.click(screen.getByRole("tab", { name: "Mobile app" }));
+        await user.click(screen.getByRole("button", { name: "Enlarge preview: Mobile app" }));
+        expect(
+            screen.getByRole("heading", { name: "Preview: Mobile app", hidden: true }),
+        ).toBeInTheDocument();
+    });
+
     it("Share copia il link", async () => {
         const user = userEvent.setup();
         renderApp();
@@ -137,7 +147,9 @@ describe("App", () => {
         await user.keyboard("l");
         expect(lock).toHaveAttribute("aria-pressed", "true");
         await user.keyboard("?");
-        const dialog = screen.getByRole("dialog", { hidden: true });
+        const dialog = screen
+            .getByRole("heading", { name: "Keyboard shortcuts", hidden: true })
+            .closest("dialog") as HTMLElement;
         expect(
             within(dialog).getByRole("heading", { name: "Keyboard shortcuts", hidden: true }),
         ).toBeInTheDocument();
