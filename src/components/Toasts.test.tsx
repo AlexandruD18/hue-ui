@@ -5,7 +5,9 @@ import { ToastProvider, useToasts } from "./Toasts";
 
 function Fire({ steps }: { steps: Parameters<ReturnType<typeof useToasts>["show"]>[0][] }) {
     const toasts = useToasts();
-    useEffect(() => steps.forEach((s) => toasts.show(s)), [steps, toasts]);
+    useEffect(() => {
+        steps.forEach((s) => toasts.show(s));
+    }, [steps, toasts]);
     return null;
 }
 

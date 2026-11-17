@@ -131,6 +131,33 @@ describe("App", () => {
         ).toBeInTheDocument();
     });
 
+    it("Why? si apre e si richiude con un secondo clic senza far crollare la pagina", async () => {
+        // come in Chrome recente: scrollIntoView restituisce una Promise
+        const original = Element.prototype.scrollIntoView;
+        Object.defineProperty(Element.prototype, "scrollIntoView", {
+            configurable: true,
+            value: () => Promise.resolve(),
+        });
+        try {
+            const user = userEvent.setup();
+            renderApp();
+            const why = screen.getByRole("button", { name: /^Why\? Text:/ });
+            await user.click(why);
+            expect(why).toHaveAttribute("aria-expanded", "true");
+            await user.click(why);
+            expect(screen.getByRole("button", { name: /^Why\? Text:/ })).toHaveAttribute(
+                "aria-expanded",
+                "false",
+            );
+            expect(screen.getByRole("heading", { level: 1, name: "Hue UI" })).toBeInTheDocument();
+        } finally {
+            Object.defineProperty(Element.prototype, "scrollIntoView", {
+                configurable: true,
+                value: original,
+            });
+        }
+    });
+
     it("Share copia il link", async () => {
         const user = userEvent.setup();
         renderApp();
