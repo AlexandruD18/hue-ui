@@ -55,7 +55,7 @@ Designed and built end to end by Alexandru Mihai Dimofte, from research to Figma
 | Unit and component tests                | 51 tests, 98% line coverage                                        |
 | End-to-end tests with axe (WCAG 2.1 AA) | 10 tests at 1440 and 390 px, in English and Italian                |
 
-The engine also has a property test. It runs 3,000 random palettes, each with one color pinned to a random value, and every contrast rule has to hold. That test is how I found a bug: a light accent typed by hand could push the background to a mid grey where no text was readable. The fix and the before/after screenshots are in the case study.
+The engine also has a property test. It runs 3,000 random palettes, each with one color pinned to a random value, and every contrast rule has to hold. I added it after the visual review before 1.0 found a bug: a light accent typed by hand could push the background to a mid grey where no text was readable. The test then showed that other pinned colors could fail too. The fix and the before/after screenshots are in the case study.
 
 Every pull request has to pass lint, types, tests with coverage, end-to-end accessibility, Lighthouse and a link check before it can merge.
 
